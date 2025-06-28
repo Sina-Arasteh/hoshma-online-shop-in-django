@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: online-store-img
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     container_name: backend-store
     ports:
