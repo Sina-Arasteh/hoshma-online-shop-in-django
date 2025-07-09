@@ -130,3 +130,9 @@ STATIC_ROOT = BASE_DIR / "collected_static_files"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Media
+
+MEDIA_URL = "image/"
+
+MEDIA_ROOT = BASE_DIR / "product_images"
