@@ -31,7 +31,6 @@ class Tag(models.Model):
 def product_main_image_upload_to(instance, filename):
     return f"{slugify(instance.title)}/{filename}"
 
-
 class Product(models.Model):
     title = models.CharField(max_length=250, unique=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
