@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <div class="d-flex justify-content-center align-items-center" style="height: 85vh;">
+    <form method="post" class="border border-2 rounded border-dark bg-info my-5 p-5 w-50">
+      {% csrf_token %}
+      <h4 class="mb-4">ورود | ثبت‌نام</h4>
+      <p class="m-0">سلام!</p>
+      <p>لطفا شماره موبایل یا ایمیل خود را وارد کنید</p>
+      <input type="text" name="email_phone" class="form-control mb-4" required autofocus minlength="5" maxlength="254">
+      <div class="d-grid gap-2 mb-2">
+        <button type="submit" class="btn btn-outline-light">ورود</button>
+      </div>
+      <p class="small">ورود شما به معنای پذیرش <a href="" class="link-underline link-underline-opacity-0 link-danger">شرایط فروشگاه ما</a> و <a href="" class="link-underline link-underline-opacity-0 link-danger">قوانین حریم خصوصی</a> است</p>
+    </form>
+  </div>
+{% endblock %}
