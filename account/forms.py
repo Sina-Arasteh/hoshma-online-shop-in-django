@@ -11,7 +11,7 @@ class EmailAddressForm(forms.Form):
 
 
 class PhoneNumberForm(forms.Form):
-    phone = forms.CharField(validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)])
+    phone = forms.CharField(max_length=11 ,validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)])
 
 
 class SignUp(forms.Form):
