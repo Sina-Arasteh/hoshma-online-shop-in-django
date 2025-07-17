@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <div class="d-flex justify-content-center align-items-center" style="height: 85vh;">
+    <form method="post" action="{% url 'account:login' %}" class="border border-2 rounded border-dark bg-info my-5 p-5 w-50" novalidate>
+      {% csrf_token %}
+      <h4 class="mb-4">ورود به حساب کاربری</h4>
+      {% for field in login_form %}
+        <div class="form-floating mb-3">
+          {{ field }}
+          {{ field.label_tag }}
+        </div>
+      {% endfor %}
+      <div class="d-grid gap-2 mb-2 mt-4">
+        <button type="submit" class="btn btn-outline-light">ورود</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

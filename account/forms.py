@@ -4,6 +4,7 @@ import re
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class EmailAddressForm(forms.Form):
@@ -11,7 +12,7 @@ class EmailAddressForm(forms.Form):
 
 
 class PhoneNumberForm(forms.Form):
-    phone = forms.CharField(max_length=11 ,validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)])
+    phone = forms.CharField(validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)])
 
 
 class SignUp(forms.Form):
@@ -30,20 +31,19 @@ class SignUp(forms.Form):
         ]
     )
     email_phone = forms.CharField(
-        label="ایمیل / شماره موبایل",
-        disabled=True
+        label="ایمیل / شماره موبایل"
     )
     password = forms.CharField(
-        label="گذرواژه",
+        label="رمز عبور",
         widget=forms.PasswordInput
     )
     password_confirmation = forms.CharField(
-        label="تکرار گذرواژه",
+        label="تکرار رمز عبور",
         widget=forms.PasswordInput
     )
 
     username.widget.attrs.update({'class': 'form-control'})
-    email_phone.widget.attrs.update({'class': 'form-control'})
+    email_phone.widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
     password.widget.attrs.update({'class': 'form-control'})
     password_confirmation.widget.attrs.update({'class': 'form-control'})
 
@@ -82,5 +82,14 @@ class SignUp(forms.Form):
         except:
             password = None
         if password_confirmation != password:
-            raise ValidationError("تکرار گذرواژه صحیح نمی‌باشد.")
+            raise ValidationError("تکرار رمز عبور صحیح نمی‌باشد.")
         return password_confirmation
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
+        self.fields['username'].label = 'نام کاربری'
+        self.fields['password'].widget.attrs.update({'class': 'form-control', 'autofocus': 'autofocus'})
+        self.fields['password'].label = 'رمز عبور'
