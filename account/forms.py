@@ -54,7 +54,7 @@ class SignUp(forms.Form):
             User.objects.get(username__iexact=username)
         except User.DoesNotExist:
             return username
-        raise ValidationError("این نام کاربری قبلا ثبت شده است.")
+        raise ValidationError("نام کاربری وارد شده قبلا ثبت شده است.")
     
     def clean_password(self):
         """Validates the password through the password validators"""

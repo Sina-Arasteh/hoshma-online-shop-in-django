@@ -18,7 +18,8 @@ class Customer(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        primary_key=True
+        primary_key=True,
+        related_name="customer"
     )
     phone_number = models.CharField(
         "شماره موبایل",

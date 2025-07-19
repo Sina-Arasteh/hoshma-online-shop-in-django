@@ -10,6 +10,16 @@
           {{ field }}
           {{ field.label_tag }}
         </div>
+        {% if field.id_for_label == "id_password" %}
+          <div class="form-text">
+            <p class="text-primary-emphasis small">گذرواژه باید حداقل 8 کاراکتر و نباید تنها شامل اعداد باشد. همچنین گذرواژه نباید تشابه بالایی با نام کاربری یا ایمیل‌تان داشته باشد و نیز گذرواژه نباید جزو گذرواژه‌های رایج باشد.</p>
+          </div>
+        {% endif %}
+        <ul class="form-text text-danger-emphasis">
+          {% for error in field.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
       {% endfor %}
       <div class="d-grid gap-2 mb-2 mt-4">
         <button type="submit" class="btn btn-outline-light">ایجاد حساب کاربری</button>
