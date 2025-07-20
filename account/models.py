@@ -9,9 +9,13 @@ class Address(models.Model):
     province = models.CharField("استان", max_length=30, choices=constants.PROVINCE_CHOICES)
     city = models.CharField('شهر', max_length=20)
     street = models.CharField('خیابان', max_length=20)
-    alley = models.CharField('کوجه', max_length=20)
+    alley = models.CharField('کوچه', max_length=20)
     number = models.CharField('پلاک', max_length=3)
     zip_code = models.CharField('کدپستی', max_length=10)
+
+    class Meta:
+        verbose_name = "آدرس"
+        verbose_name_plural = "آدرس‌ها"
 
 
 class Customer(models.Model):
@@ -19,7 +23,8 @@ class Customer(models.Model):
         User,
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name="customer"
+        related_name="customer",
+        verbose_name="کاربر"
     )
     phone_number = models.CharField(
         "شماره موبایل",
@@ -28,3 +33,7 @@ class Customer(models.Model):
         blank=True
     )
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="آدرس")
+
+    class Meta:
+        verbose_name = "مشتری"
+        verbose_name_plural = "مشتری‌ها"
