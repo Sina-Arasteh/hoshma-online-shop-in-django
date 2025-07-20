@@ -42,6 +42,8 @@ class SignUp(forms.Form):
         widget=forms.PasswordInput
     )
 
+    first_name.widget.attrs.update({'class': 'form-control'})
+    last_name.widget.attrs.update({'class': 'form-control'})
     username.widget.attrs.update({'class': 'form-control'})
     email_phone.widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
     password.widget.attrs.update({'class': 'form-control'})
@@ -90,6 +92,7 @@ class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
+        self.fields['username'].widget.attrs.pop('autofocus', None)
         self.fields['username'].label = 'نام کاربری'
         self.fields['password'].widget.attrs.update({'class': 'form-control', 'autofocus': 'autofocus'})
         self.fields['password'].label = 'رمز عبور'

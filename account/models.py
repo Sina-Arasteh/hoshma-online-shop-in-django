@@ -16,6 +16,9 @@ class Address(models.Model):
     class Meta:
         verbose_name = "آدرس"
         verbose_name_plural = "آدرس‌ها"
+    
+    def __str__(self):
+        return f"{self.province}/{self.city}/{self.street}/{self.alley}/{self.number}"
 
 
 class Customer(models.Model):
@@ -35,5 +38,7 @@ class Customer(models.Model):
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="آدرس")
 
     class Meta:
-        verbose_name = "مشتری"
-        verbose_name_plural = "مشتری‌ها"
+        verbose_name = "سایر مشخصات"
+    
+    def __str__(self):
+        return self.user.username
