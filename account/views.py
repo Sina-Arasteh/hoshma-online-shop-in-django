@@ -4,6 +4,7 @@ from . import forms, models
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib.auth import views as auth_views
 
 
 class SignUpLoginView(View):
@@ -20,10 +21,8 @@ class SignUpLoginView(View):
             except User.DoesNotExist:
                 user = None
             if user:
-                context = {'login_form': forms.CustomAuthenticationForm(initial={'username': user.username,}),}
-                return render(request, "account/login.html", context)
-            context = {'signup_form': forms.SignUp(initial={'email_phone': email_form.cleaned_data['email'],}),}
-            return render(request, 'account/signup.html', context)
+                return HttpResponseRedirect(reverse('account:login', query={'username': user.username,}))
+            return HttpResponseRedirect(reverse('account:signup', query={'email_phone': email_form.cleaned_data['email'],}))
         
         elif phone_form.is_valid():
             try:
@@ -31,16 +30,18 @@ class SignUpLoginView(View):
             except models.Customer.DoesNotExist:
                 user = None
             if user:
-                context = {'login_form': forms.CustomAuthenticationForm(initial={'username': user.user.username,}),}
-                return render(request, "account/login.html", context)
-            context = {'signup_form': forms.SignUp(initial={'email_phone': phone_form.cleaned_data['phone'],}),}
-            return render(request, 'account/signup.html', context)
+                return HttpResponseRedirect(reverse('account:login', query={'username': user.username,}))
+            return HttpResponseRedirect(reverse('account:signup', query={'email_phone': phone_form.cleaned_data['phone'],}))
         
         context = {'error': "شماره موبایل یا ایمیل نادرست است."}
         return render(request, "account/signup_login.html", context)
 
 
 class SignUpView(View):
+    def get(self, request):
+        context = {'signup_form': forms.SignUp(initial={'email_phone': request.GET.get('email_phone'),}),}
+        return render(request, 'account/signup.html', context)
+
     def post(self, request):
         email_form = forms.EmailAddressForm({'email': request.POST.get('email_phone')})
         phone_form = forms.PhoneNumberForm({'phone': request.POST.get('email_phone')})
@@ -92,3 +93,12 @@ class SignUpView(View):
 
         context = {'error': "شماره موبایل یا ایمیل نادرست است."}
         return render(request, "account/signup_login.html", context)
+
+
+class CustomLoginView(auth_views.LoginView):
+    def get_initial(self):
+        initial = super().get_initial()
+        username = self.request.GET.get('username')
+        if username:
+            initial['username'] = username
+        return initial

@@ -5,6 +5,13 @@ from django.contrib.auth import views as auth_views
 app_name = "account"
 urlpatterns = [
     path("signup-login/", views.SignUpLoginView.as_view(), name='signup-login'),
-    path("login/", auth_views.LoginView.as_view(authentication_form=forms.CustomAuthenticationForm), name='login'),
+    path(
+        "login/",
+        views.CustomLoginView.as_view(
+            authentication_form=forms.CustomAuthenticationForm,
+            template_name="account/login.html"
+        ),
+        name='login'
+    ),
     path("signup/", views.SignUpView.as_view(), name='signup'),
 ]
