@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import AuthenticationForm
+from .models import Customer
 
 
 class EmailAddressForm(forms.Form):
@@ -31,14 +32,15 @@ class SignUp(forms.Form):
         ]
     )
     email_phone = forms.CharField(
-        label="ایمیل / شماره موبایل"
+        label="ایمیل / شماره موبایل",
+        max_length=254
     )
     password = forms.CharField(
-        label="رمز عبور",
+        label="گذرواژه",
         widget=forms.PasswordInput
     )
     password_confirmation = forms.CharField(
-        label="تکرار رمز عبور",
+        label="تکرار گذرواژه",
         widget=forms.PasswordInput
     )
 
@@ -57,7 +59,21 @@ class SignUp(forms.Form):
         except User.DoesNotExist:
             return username
         raise ValidationError("نام کاربری وارد شده قبلا ثبت شده است.")
-    
+
+    def clean_email_phone(self):
+        """Checks if email or phone is duplicate"""
+        emph = self.cleaned_data['email_phone']
+        try:
+            User.objects.get(email__iexact=emph)
+        except User.DoesNotExist:
+            try:
+                Customer.objects.get(phone=emph)
+            except:
+                return emph
+            raise ValidationError("شماره موبایل وارد شده قبلا ثبت شده است.")
+        raise ValidationError("ایمیل وارد شده قبلا ثبت شده است.")
+
+
     def clean_password(self):
         """Validates the password through the password validators"""
         password = self.cleaned_data['password']
@@ -84,7 +100,7 @@ class SignUp(forms.Form):
         except:
             password = None
         if password_confirmation != password:
-            raise ValidationError("تکرار رمز عبور صحیح نمی‌باشد.")
+            raise ValidationError("تکرار گذرواژه صحیح نمی‌باشد.")
         return password_confirmation
 
 
@@ -93,6 +109,4 @@ class CustomAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
         self.fields['username'].widget.attrs.pop('autofocus', None)
-        self.fields['username'].label = 'نام کاربری'
         self.fields['password'].widget.attrs.update({'class': 'form-control', 'autofocus': 'autofocus'})
-        self.fields['password'].label = 'رمز عبور'

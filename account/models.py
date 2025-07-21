@@ -29,7 +29,7 @@ class Customer(models.Model):
         related_name="customer",
         verbose_name="کاربر"
     )
-    phone_number = models.CharField(
+    phone = models.CharField(
         "شماره موبایل",
         max_length=11,
         validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)],

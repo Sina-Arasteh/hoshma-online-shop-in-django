@@ -10,13 +10,16 @@
         {{ field }}
         {% if field.id_for_label == "id_password" %}
           <div class="form-text text-center">
-            <p class="text-primary-emphasis small">رمز عبور باید حداقل 8 کاراکتر و نباید تنها شامل اعداد باشد. همچنین رمز عبور نباید تشابه بالایی با نام کاربری یا ایمیل‌تان داشته باشد و نیز رمز عبور نباید جزو رمز عبورهای رایج باشد.</p>
+            <p class="text-primary-emphasis small">گذرواژه باید حداقل 8 کاراکتر و نباید تنها شامل اعداد باشد. همچنین گذرواژه نباید تشابه بالایی با نام کاربری یا ایمیل‌تان داشته باشد و نیز گذرواژه نباید جزو گذرواژه‌های رایج باشد.</p>
           </div>
         {% endif %}
         <ul class="form-text text-danger-emphasis">
           {% for error in field.errors %}
             <li>{{ error }}</li>
           {% endfor %}
+          {% if emph_error %}
+            <li>{{ emph_error }}</li>
+          {% endif %}
         </ul>
       </div>
     {% endfor %}
