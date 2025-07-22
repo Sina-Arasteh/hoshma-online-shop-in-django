@@ -1,7 +1,8 @@
 from django.db import models
-from . import constants
+from . import constants, validators
 from django.utils.text import slugify
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 
 class Category(models.Model):
@@ -19,12 +20,17 @@ class Category(models.Model):
 class Discount(models.Model):
     type = models.CharField("نوع تخفیف", max_length=10, choices=constants.DISCOUNT_CHOICES)
     discount = models.IntegerField("میزان تخفیف")
-    start = models.DateTimeField("شروع تخفیف")
+    start = models.DateTimeField("شروع تخفیف", validators=[validators.not_in_past_validator,])
     end = models.DateTimeField("پایان تخفیف")
 
     class Meta:
         verbose_name = "تخفیف"
         verbose_name_plural = "تخفیف‌ها"
+
+    def clean(self):
+        super().clean()
+        if self.start < self.end:
+            raise ValidationError({'end': "تاریخ و زمان پایان تخفیف نمی‌تواند قبل از تاریخ و زمان شروع تخفیف باشد."})
 
     def __str__(self):
         return self.pk
