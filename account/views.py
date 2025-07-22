@@ -4,7 +4,7 @@ from . import forms, models
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views, login
 
 
 class SignUpLoginView(View):
@@ -53,6 +53,7 @@ class SignUpView(View):
                 new_user.first_name = signup_form.cleaned_data['first_name']
                 new_user.last_name = signup_form.cleaned_data['last_name']
                 new_user.save()
+                login(request, new_user)
                 return HttpResponseRedirect(reverse("store:index-page"))
             context = {'signup_form': signup_form}
             return render(request, 'account/signup.html', context)
@@ -69,6 +70,7 @@ class SignUpView(View):
                 new_user.save()
                 new_user.customer.phone = signup_form.cleaned_data['email_phone']
                 new_user.customer.save()
+                login(request, new_user)
                 return HttpResponseRedirect(reverse("store:index-page"))
             context = {'signup_form': signup_form}
             return render(request, 'account/signup.html', context)
