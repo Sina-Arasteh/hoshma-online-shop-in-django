@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth import views as auth_views, login
+from django.utils.translation import gettext as _
 
 
 class SignUpLoginView(View):
@@ -29,7 +30,7 @@ class SignUpLoginView(View):
             except models.Customer.DoesNotExist:
                 return HttpResponseRedirect(reverse('account:signup', query={'email_phone': phone_form.cleaned_data['phone'],}))
         
-        context = {'emph_error': "شماره موبایل یا ایمیل نادرست است."}
+        context = {'emph_error': _("What you have entered is not a valid Email or Phone.")}
         return render(request, "account/signup_login.html", context)
 
 
@@ -77,7 +78,7 @@ class SignUpView(View):
 
         context = {
             'signup_form': signup_form,
-            'emph_error': "شماره موبایل یا ایمیل نادرست است.",
+            'emph_error': _("What you have entered is not a valid Email or Phone."),
         }
         return render(request, 'account/signup.html', context)
 

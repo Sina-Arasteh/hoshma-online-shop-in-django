@@ -6,41 +6,42 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Customer
+from django.utils.translation import gettext_lazy as _
 
 
 class EmailAddressForm(forms.Form):
-    email = forms.EmailField(max_length=254)
+    email = forms.EmailField(label=_("Email"), max_length=254)
 
 
 class PhoneNumberForm(forms.Form):
-    phone = forms.CharField(validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)])
+    phone = forms.CharField(label=_("Phone"), validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)])
 
 
 class SignUp(forms.Form):
-    first_name = forms.CharField(label="نام", max_length=50, min_length=3)
-    last_name = forms.CharField(label="نام خانوادگی", max_length=50, min_length=3)
+    first_name = forms.CharField(label=_("First Name"), max_length=50, min_length=3)
+    last_name = forms.CharField(label=_("Last Name"), max_length=50, min_length=3)
     username = forms.CharField( 
-        label="نام کاربری",
+        label=_("Username"),
         max_length=150,
         min_length=4,
         validators=[
             RegexValidator(
                 regex=r"^[\w.@+-]+\Z",
-                message="فقط از حروف الفبا و اعداد انگلیسی و نمادهای [@.-_+] استفاده شود.",
+                message="Username may contain alphanumeric, _, @, +, . and - characters.",
                 flags=re.A
             )
         ]
     )
     email_phone = forms.CharField(
-        label="ایمیل / شماره موبایل",
+        label="Email or Phone",
         max_length=254
     )
     password = forms.CharField(
-        label="گذرواژه",
+        label="Password",
         widget=forms.PasswordInput
     )
     password_confirmation = forms.CharField(
-        label="تکرار گذرواژه",
+        label=_("Password Confirmation"),
         widget=forms.PasswordInput
     )
 
@@ -58,7 +59,7 @@ class SignUp(forms.Form):
             User.objects.get(username__iexact=username)
         except User.DoesNotExist:
             return username
-        raise ValidationError("نام کاربری وارد شده قبلا ثبت شده است.")
+        raise ValidationError(_("The username has been registered before."))
 
     def clean_email_phone(self):
         """Checks if email or phone is duplicate"""
@@ -70,8 +71,8 @@ class SignUp(forms.Form):
                 Customer.objects.get(phone=emph)
             except:
                 return emph
-            raise ValidationError("شماره موبایل وارد شده قبلا ثبت شده است.")
-        raise ValidationError("ایمیل وارد شده قبلا ثبت شده است.")
+            raise ValidationError(_("The phone number has been registered before."))
+        raise ValidationError(_("The email address has been registered before."))
 
 
     def clean_password(self):
@@ -100,7 +101,7 @@ class SignUp(forms.Form):
         except:
             password = None
         if password_confirmation != password:
-            raise ValidationError("تکرار گذرواژه صحیح نمی‌باشد.")
+            raise ValidationError(_("Password confirmation is not correct."))
         return password_confirmation
 
 

@@ -7,16 +7,6 @@ from . import models
 from store import models as store_models
 
 
-# models = apps.get_models()
-# for model in models:
-#     try:
-#         admin.site.register(model)
-#     except admin.sites.AlreadyRegistered:
-#         pass
-
-
-# admin.site.unregister(Customer)
-
 admin.site.register(models.Address)
 admin.site.register(store_models.Category)
 admin.site.register(store_models.Discount)

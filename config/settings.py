@@ -136,3 +136,10 @@ LOGIN_REDIRECT_URL = "store:index-page"
 LOGOUT_REDIRECT_URL = "store:index-page"
 
 LOGIN_URL = "account:signup-login"
+
+
+# Localization
+
+LOCALE_PATHS = [
+    BASE_DIR / "locale",
+]
