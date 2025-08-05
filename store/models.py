@@ -15,16 +15,35 @@ class Category(models.Model):
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        null=True
     )
 
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
+    
+    def clean(self):
+        super().clean()
+        if self.parent == self:
+            raise ValidationError({'parent': _("A category cannot be set as a parent for itself.")})
+        
+        ancestor = self.parent
+        while ancestor:
+            if ancestor == self:
+                raise ValidationError({'parent': _("Circular parent relationship detected.")})
+            ancestor = ancestor.parent
+
+    def get_parent_hierarchy(self):
+        parent = self.parent
+        parents = list()
+        while parent:
+            parents.append(parent.name)
+            parent = parent.parent
+        return "/".join(reversed(parents))
 
     def __str__(self):
-        return self.name
+        parents = self.get_parent_hierarchy()
+        return f"{parents}/{self.name}" if parents else self.name
 
 
 class Discount(models.Model):

@@ -1,9 +1,5 @@
-from django.shortcuts import render
-from django.views import View
 from . import forms, models, serializers
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.contrib.auth import views as auth_views, login
 from django.utils.translation import gettext as _
 from rest_framework import status
