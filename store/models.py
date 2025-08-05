@@ -17,11 +17,24 @@ class Category(models.Model):
         on_delete=models.CASCADE,
         null=True
     )
+    depth = models.IntegerField(editable=False)
 
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
+        indexes = [
+            models.Index(fields=['depth']),
+        ]
     
+    def save(self, *args, **kwargs):
+        count = 0
+        parent = self.parent
+        while parent:
+            count += 1
+            parent = parent.parent
+        self.depth = count
+        super().save(*args, **kwargs)
+
     def clean(self):
         super().clean()
         if self.parent == self:

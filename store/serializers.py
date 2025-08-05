@@ -12,8 +12,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Category
-        fields = "id, name, parent_read, parent_write"
-    
+        fields = ['id', 'name', 'parent_read', 'parent_write', 'depth',]
+
     def validate(self, data):
         instance = models.Category(**data)
         if self.instance:

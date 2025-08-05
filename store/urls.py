@@ -3,5 +3,6 @@ from . import views
 
 app_name = "store"
 urlpatterns = [
-    # path('home/', views.home, name="index-page"),
+    path('categories/', views.CategoryListAPIView.as_view(), name='categories'),
+    path('categories/<int:pk>/', views.CategoryDetailAPIView.as_view(), name='category'),
 ]
