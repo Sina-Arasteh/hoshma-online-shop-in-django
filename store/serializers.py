@@ -22,10 +22,17 @@ class CategorySerializer(serializers.ModelSerializer):
         return data
 
 
-
 class DiscountSerializer(serializers.ModelSerializer):
-    pass
+    class Meta:
+        model = models.Discount
+        fields = "__all__"
     
+    def validate(self, data):
+        instance = models.Discount(**data)
+        if self.instance:
+            instance.id = self.instance.id
+        instance.clean()
+        return data
 
 
 # class ProductSerializer(serializers.ModelSerializer):

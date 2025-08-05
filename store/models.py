@@ -52,12 +52,15 @@ class Discount(models.Model):
         max_length=10,
         choices=constants.DISCOUNT_CHOICES
     )
-    discount = models.IntegerField(_("Amount"))
+    amount = models.IntegerField(_("Amount"))
     start = models.DateTimeField(
         _("Start"),
         validators=[validators.not_in_past_validator,]
     )
-    end = models.DateTimeField(_("End"))
+    end = models.DateTimeField(
+        _("End"),
+        validators=[validators.not_in_past_validator,]
+    )
 
     class Meta:
         verbose_name = _("Discount")
@@ -65,11 +68,11 @@ class Discount(models.Model):
 
     def clean(self):
         super().clean()
-        if self.start < self.end:
+        if self.start >= self.end:
             raise ValidationError({'end': _("Please set a date and time after the date and time of the start.")})
 
     def __str__(self):
-        return self.pk
+        return f"{self.type}: {self.amount}"
 
 
 class Tag(models.Model):
