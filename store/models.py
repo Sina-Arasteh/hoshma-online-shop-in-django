@@ -103,23 +103,6 @@ class Tag(models.Model):
         return self.name
 
 
-def product_images_upload_to(instance, filename):
-    return f"{slugify(instance.product.title)}/{filename}"
-
-class Image(models.Model):
-    image = models.ImageField(
-        _("Image"),
-        upload_to=product_images_upload_to
-    )
-
-    class Meta:
-        verbose_name = _("Image")
-        verbose_name_plural = _("Images")
-
-    def __str__(self):
-        return f"Image for {self.product.title}"
-
-
 def product_main_image_upload_to(instance, filename):
     return f"{slugify(instance.title)}/{filename}"
 
@@ -138,10 +121,6 @@ class Product(models.Model):
     main_image = models.ImageField(
         _("Main Image"),
         upload_to=product_main_image_upload_to
-    )
-    images = models.ManyToManyField(
-        Image,
-        verbose_name=_("Images")
     )
     price = models.IntegerField(_("Price"))
     discount = models.OneToOneField(
@@ -170,6 +149,29 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+
+
+def product_images_upload_to(instance, filename):
+    return f"products/{slugify(instance.product.title)}/{filename}"
+
+class Image(models.Model):
+    image = models.ImageField(
+        _("Image"),
+        upload_to=product_images_upload_to
+    )
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='images'
+    )
+
+    class Meta:
+        verbose_name = _("Image")
+        verbose_name_plural = _("Images")
+
+    def __str__(self):
+        return f"Image for {self.product.id}"
 
 
 class Order(models.Model):

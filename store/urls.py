@@ -9,4 +9,6 @@ urlpatterns = [
     path('discounts/<int:pk>/', views.DiscountDetailAPIView.as_view(), name='discount-detail'),
     path('tags/', views.TagListAPIView.as_view(), name='tag-list'),
     path('tags/<int:pk>/', views.TagDetailAPIView.as_view(), name='tag-detail'),
+    path('images/', views.ImageListAPIView.as_view(), name='image-list'),
+    path('images/<int:pk>/', views.ImageDetailAPIView.as_view(), name='image-detail'),
 ]

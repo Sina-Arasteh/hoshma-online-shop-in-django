@@ -119,7 +119,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = "image/"
 
-MEDIA_ROOT = BASE_DIR / "product_images"
+MEDIA_ROOT = BASE_DIR / "images"
 
 
 # Auth
