@@ -35,6 +35,7 @@ class DiscountSerializer(serializers.ModelSerializer):
         return data
 
 
-# class ProductSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = models.Product
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Tag
+        fields = "__all__"
