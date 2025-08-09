@@ -39,6 +39,14 @@ class CategoryDetailAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def patch(self, request, pk):
+        category = self.get_object(pk)
+        serializer = serializers.CategorySerializer(category, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         category = self.get_object(pk)
         category.delete()
@@ -74,6 +82,14 @@ class DiscountDetailAPIView(APIView):
     def put(self, request, pk):
         discount = self.get_object(pk)
         serializer = serializers.DiscountSerializer(discount, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, pk):
+        discount = self.get_object(pk)
+        serializer = serializers.DiscountSerializer(discount, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -159,7 +175,63 @@ class ImageDetailAPIView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def patch(self, request, pk):
+        image = self.get_object(pk)
+        serializer = serializers.ImageSerializer(image, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     def delete(self, request, pk):
         image = self.get_object(pk)
         image.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProductListAPIView(APIView):
+    def get(self, request):
+        products = models.Product.objects.all()
+        serializer = serializers.ProductSerializer(products, many=True)
+        return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = serializers.ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductDetailAPIView(APIView):
+    def get_object(self, pk):
+        try:
+            return models.Product.objects.get(pk=pk)
+        except models.Product.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk):
+        product = self.get_object(pk)
+        serializer = serializers.ProductSerializer(product)
+        return Response(serializer.data)
+    
+    def put(self, request, pk):
+        product = self.get_object(pk)
+        serializer = serializers.ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, pk):
+        product = self.get_object(pk)
+        serializer = serializers.ProductSerializer(product, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        product = self.get_object(pk)
+        product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

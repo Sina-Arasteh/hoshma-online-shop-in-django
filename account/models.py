@@ -4,6 +4,8 @@ from django.core.validators import RegexValidator
 import re
 from . import constants
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from store import models as store_models
 
 
 class Address(models.Model):
@@ -69,3 +71,26 @@ class Customer(models.Model):
     
     def __str__(self):
         return self.user.username
+
+
+class Order(models.Model):
+    products = models.ManyToManyField(
+        store_models.Product,
+        verbose_name=_("Products")
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders",
+        verbose_name=_("User")
+    )
+    creation = models.DateTimeField(
+        _("Creation"),
+        auto_now_add=True
+    )
+    total_price = models.IntegerField(_("Total Price"))
+
+    class Meta:
+        ordering = ["-creation"]
+        verbose_name = _("Order")
+        verbose_name_plural = _("Orders")
