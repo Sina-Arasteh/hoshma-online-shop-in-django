@@ -26,8 +26,8 @@ class Address(models.Model):
         _("Alley"),
         max_length=20
     )
-    # Translators: By 'Number' here means the number in Addresses.
     number = models.CharField(
+        # Translators: By 'Number' here means the number in Addresses.
         _("Number"),
         max_length=3
     )
@@ -44,12 +44,12 @@ class Address(models.Model):
         return f"{self.province}/{self.city}/{self.street}/{self.alley}/{self.number}"
 
 
-class Customer(models.Model):
+class ContactInformation(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name="customer",
+        related_name="contact_info",
         verbose_name=_("User")
     )
     phone = models.CharField(

@@ -25,9 +25,9 @@ class SignUpLoginAPIView(APIView):
         
         elif phone_serializer.is_valid():
             try:
-                customer = models.Customer.objects.get(phone=phone_serializer.validated_data['phone'])
-                return Response({'user': True, 'username': customer.user.username,}, status=status.HTTP_200_OK)
-            except models.Customer.DoesNotExist:
+                contact_info = models.ContactInformation.objects.get(phone=phone_serializer.validated_data['phone'])
+                return Response({'user': True, 'username': contact_info.user.username,}, status=status.HTTP_200_OK)
+            except models.ContactInformation.DoesNotExist:
                 return Response({'user': False, 'phone': phone_serializer.validated_data['phone'],}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({'error': _("What you have entered is not a valid Email or Phone."), 'user_input': user_input}, status=status.HTTP_400_BAD_REQUEST)
@@ -39,8 +39,8 @@ class SignUpView(APIView):
         if signup_serializer.is_valid():
             new_user = signup_serializer.save()
             if signup_serializer.validated_data.get('phone'):
-                new_user.customer.phone = signup_serializer.validated_data.get('phone')
-                new_user.customer.save()
+                new_user.contact_info.phone = signup_serializer.validated_data.get('phone')
+                new_user.contact_info.save()
                 # login(request, new_user)
             return Response({'username': new_user.username}, status=status.HTTP_201_CREATED)
         return Response({'errors': signup_serializer.errors, 'user_inputs': request.data}, status=status.HTTP_400_BAD_REQUEST)

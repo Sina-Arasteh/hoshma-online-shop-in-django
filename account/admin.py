@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.apps import apps
-from .models import Customer
+from .models import ContactInformation
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from . import models
@@ -16,12 +16,12 @@ admin.site.register(store_models.Product)
 admin.site.register(store_models.Tag)
 
 
-class CustomerInline(admin.StackedInline):
-    model = Customer
+class ContactInformationInline(admin.StackedInline):
+    model = ContactInformation
     can_delete = False
 
 
 admin.site.unregister(User)
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    inlines = [CustomerInline]
+    inlines = [ContactInformationInline]

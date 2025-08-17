@@ -46,8 +46,8 @@ class SignUpSerializer(serializers.Serializer):
     def validate_phone(self, value):
         """Ensure the Phone is unique"""
         try:
-            models.Customer.objects.get(phone=value)
-        except models.Customer.DoesNotExist:
+            models.ContactInformation.objects.get(phone=value)
+        except models.ContactInformation.DoesNotExist:
             return value
         raise serializers.ValidationError(_("The phone number has been registered before."))
 
