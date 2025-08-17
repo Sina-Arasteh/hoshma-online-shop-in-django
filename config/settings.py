@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'store',
-    'account',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -128,7 +128,7 @@ LOGIN_REDIRECT_URL = "store:index-page"
 
 LOGOUT_REDIRECT_URL = "store:index-page"
 
-LOGIN_URL = "account:signup-login"
+LOGIN_URL = "accounts:signup-login"
 
 
 # Localization
