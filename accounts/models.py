@@ -5,7 +5,7 @@ import re
 from . import constants
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from store import models as store_models
+from shop import models as shop_models
 
 
 class Address(models.Model):
@@ -75,7 +75,7 @@ class ContactInformation(models.Model):
 
 class Order(models.Model):
     products = models.ManyToManyField(
-        store_models.Product,
+        shop_models.Product,
         verbose_name=_("Products")
     )
     user = models.ForeignKey(

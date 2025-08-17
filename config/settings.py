@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'store',
+    'shop',
     'accounts',
 ]
 
@@ -124,9 +124,9 @@ MEDIA_ROOT = BASE_DIR / "images"
 
 # Auth
 
-LOGIN_REDIRECT_URL = "store:index-page"
+LOGIN_REDIRECT_URL = "shop:index-page"
 
-LOGOUT_REDIRECT_URL = "store:index-page"
+LOGOUT_REDIRECT_URL = "shop:index-page"
 
 LOGIN_URL = "accounts:signup-login"
 
