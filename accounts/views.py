@@ -2,54 +2,70 @@ from . import forms, models, serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import views as auth_views, login
 from django.utils.translation import gettext as _
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 
 
-class SignUpLoginAPIView(APIView):
-    def post(self, request):
-        user_input = request.data.get('email_phone')
-        if not user_input:
-            return Response({'error': _("Please don't leave the field empty."), 'user_input': None}, status=status.HTTP_400_BAD_REQUEST)
+# class SignUpLoginAPIView(APIView):
+#     def post(self, request):
+#         user_input = request.data.get('email_phone')
+#         if not user_input:
+#             return Response({'error': _("Please don't leave the field empty."), 'user_input': None}, status=status.HTTP_400_BAD_REQUEST)
 
-        email_serializer = serializers.EmailAddressSerializer(data={'email': user_input})
-        phone_serializer = serializers.PhoneNumberSerializer(data={'phone': user_input})
+#         email_serializer = serializers.EmailAddressSerializer(data={'email': user_input})
+#         phone_serializer = serializers.PhoneNumberSerializer(data={'phone': user_input})
 
-        if email_serializer.is_valid():
-            try:
-                user = User.objects.get(email__iexact=email_serializer.validated_data['email'])
-                return Response({'user': True, 'username': user.username,}, status=status.HTTP_200_OK)
-            except User.DoesNotExist:
-                return Response({'user': False, 'email': email_serializer.validated_data['email'],}, status=status.HTTP_404_NOT_FOUND)
+#         if email_serializer.is_valid():
+#             try:
+#                 user = User.objects.get(email__iexact=email_serializer.validated_data['email'])
+#                 return Response({'user': True, 'username': user.username,}, status=status.HTTP_200_OK)
+#             except User.DoesNotExist:
+#                 return Response({'user': False, 'email': email_serializer.validated_data['email'],}, status=status.HTTP_404_NOT_FOUND)
         
-        elif phone_serializer.is_valid():
-            try:
-                contact_info = models.ContactInformation.objects.get(phone=phone_serializer.validated_data['phone'])
-                return Response({'user': True, 'username': contact_info.user.username,}, status=status.HTTP_200_OK)
-            except models.ContactInformation.DoesNotExist:
-                return Response({'user': False, 'phone': phone_serializer.validated_data['phone'],}, status=status.HTTP_404_NOT_FOUND)
+#         elif phone_serializer.is_valid():
+#             try:
+#                 contact_info = models.ContactInfo.objects.get(phone=phone_serializer.validated_data['phone'])
+#                 return Response({'user': True, 'username': contact_info.user.username,}, status=status.HTTP_200_OK)
+#             except models.ContactInfo.DoesNotExist:
+#                 return Response({'user': False, 'phone': phone_serializer.validated_data['phone'],}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({'error': _("What you have entered is not a valid Email or Phone."), 'user_input': user_input}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SignUpView(APIView):
-    def post(self, request):
-        signup_serializer = serializers.SignUpSerializer(data=request.data)
-        if signup_serializer.is_valid():
-            new_user = signup_serializer.save()
-            if signup_serializer.validated_data.get('phone'):
-                new_user.contact_info.phone = signup_serializer.validated_data.get('phone')
-                new_user.contact_info.save()
-                # login(request, new_user)
-            return Response({'username': new_user.username}, status=status.HTTP_201_CREATED)
-        return Response({'errors': signup_serializer.errors, 'user_inputs': request.data}, status=status.HTTP_400_BAD_REQUEST)
+#         return Response({'error': _("What you have entered is not a valid Email or Phone."), 'user_input': user_input}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CustomLoginView(auth_views.LoginView):
-    def get_initial(self):
-        initial = super().get_initial()
-        username = self.request.GET.get('username')
-        if username:
-            initial['username'] = username
-        return initial
+# class SignUpView(APIView):
+#     def post(self, request):
+#         signup_serializer = serializers.SignUpSerializer(data=request.data)
+#         if signup_serializer.is_valid():
+#             new_user = signup_serializer.save()
+#             if signup_serializer.validated_data.get('phone'):
+#                 new_user.contact_info.phone = signup_serializer.validated_data.get('phone')
+#                 new_user.contact_info.save()
+#                 # login(request, new_user)
+#             return Response({'username': new_user.username}, status=status.HTTP_201_CREATED)
+#         return Response({'errors': signup_serializer.errors, 'user_inputs': request.data}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class CustomLoginView(auth_views.LoginView):
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         username = self.request.GET.get('username')
+#         if username:
+#             initial['username'] = username
+#         return initial
+
+
+class AddressList(generics.ListAPIView):
+    queryset = models.Address.objects.all()
+    serializer_class = serializers.AddressReadSerializer
+    permission_classes = [IsAdminUser]
+
+
+class AddressDetail(generics.RetrieveAPIView):
+    queryset = models.Address.objects.all()
+    serializer_class = serializers.AddressReadSerializer
+    permission_classes = [IsAdminUser]
+
+
+class ContactInfo()

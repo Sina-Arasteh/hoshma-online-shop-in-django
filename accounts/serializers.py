@@ -46,8 +46,8 @@ class SignUpSerializer(serializers.Serializer):
     def validate_phone(self, value):
         """Ensure the Phone is unique"""
         try:
-            models.ContactInformation.objects.get(phone=value)
-        except models.ContactInformation.DoesNotExist:
+            models.ContactInfo.objects.get(phone=value)
+        except models.ContactInfo.DoesNotExist:
             return value
         raise serializers.ValidationError(_("The phone number has been registered before."))
 
@@ -82,3 +82,58 @@ class SignUpSerializer(serializers.Serializer):
 #     class Meta:
 #         model = User
 #         fields = ['username', 'first_name', 'last_name']
+
+
+class AddressReadSerializer(serializers.ModelSerializer):
+    users = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = models.Address
+        fields = [
+            'id',
+            'province',
+            'city',
+            'street',
+            'alley',
+            'number',
+            'zip_code',
+            'users',
+        ]
+
+
+class AddressReadWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Address
+        fields = [
+            'province',
+            'city',
+            'street',
+            'alley',
+            'number',
+            'zip_code',
+        ]
+
+
+class ContactInfoSerializer(serializers.ModelSerializer):
+    address = AddressReadWriteSerializer()
+
+    class Meta:
+        model = models.ContactInfo
+        fields = ['user', 'phone', 'address',]
+    
+    def create(self, validated_data):
+        address_data = validated_data.pop('address', [])
+        contactinfo = models.ContactInfo.objects.create
+
+    def update(self, instance, validated_data):
+        pass
+
+
+class AuthUserModelSerializer(serializers.ModelSerializer):
+    pass
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Order
+        fields = '__all__'

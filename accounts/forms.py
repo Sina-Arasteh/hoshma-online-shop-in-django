@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import AuthenticationForm
-from .models import ContactInformation
+from .models import ContactInfo
 from django.utils.translation import gettext_lazy as _
 
 
@@ -68,7 +68,7 @@ class SignUp(forms.Form):
             User.objects.get(email__iexact=emph)
         except User.DoesNotExist:
             try:
-                ContactInformation.objects.get(phone=emph)
+                ContactInfo.objects.get(phone=emph)
             except:
                 return emph
             raise ValidationError(_("The phone number has been registered before."))

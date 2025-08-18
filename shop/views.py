@@ -3,9 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from . import models, serializers
 from django.http import Http404
+from permissions import IsAdminOrReadOnly
 
 
 class CategoryListAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         categories = models.Category.objects.all()
         serializer = serializers.CategorySerializer(categories, many=True)
@@ -20,6 +23,8 @@ class CategoryListAPIView(APIView):
 
 
 class CategoryDetailAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get_object(self, pk):
         try:
             return models.Category.objects.get(pk=pk)
@@ -54,6 +59,8 @@ class CategoryDetailAPIView(APIView):
 
 
 class DiscountListAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         discounts = models.Discount.objects.all()
         serializer = serializers.DiscountSerializer(discounts, many=True)
@@ -68,6 +75,8 @@ class DiscountListAPIView(APIView):
 
 
 class DiscountDetailAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get_object(self, pk):
         try:
             return models.Discount.objects.get(pk=pk)
@@ -102,6 +111,8 @@ class DiscountDetailAPIView(APIView):
 
 
 class TagListAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         tags = models.Tag.objects.all()
         serializer = serializers.TagSerializer(tags, many=True)
@@ -116,6 +127,8 @@ class TagListAPIView(APIView):
 
 
 class TagDetailAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get_object(self, pk):
         try:
             return models.Tag.objects.get(pk=pk)
@@ -142,6 +155,8 @@ class TagDetailAPIView(APIView):
 
 
 class ImageListAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         images = models.Image.objects.all()
         serializer = serializers.ImageSerializer(images, many=True)
@@ -156,6 +171,8 @@ class ImageListAPIView(APIView):
 
 
 class ImageDetailAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get_object(self, pk):
         try:
             return models.Image.objects.get(pk=pk)
@@ -190,6 +207,8 @@ class ImageDetailAPIView(APIView):
 
 
 class ProductListAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get(self, request):
         products = models.Product.objects.all()
         serializer = serializers.ProductSerializer(products, many=True)
@@ -204,6 +223,8 @@ class ProductListAPIView(APIView):
 
 
 class ProductDetailAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
     def get_object(self, pk):
         try:
             return models.Product.objects.get(pk=pk)

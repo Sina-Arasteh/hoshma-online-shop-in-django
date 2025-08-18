@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 import re
 from . import constants
@@ -44,9 +43,9 @@ class Address(models.Model):
         return f"{self.province}/{self.city}/{self.street}/{self.alley}/{self.number}"
 
 
-class ContactInformation(models.Model):
+class ContactInfo(models.Model):
     user = models.OneToOneField(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         primary_key=True,
         related_name="contact_info",
@@ -55,6 +54,7 @@ class ContactInformation(models.Model):
     phone = models.CharField(
         _("Phone"),
         max_length=11,
+        unique=True,
         validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)],
         blank=True
     )
@@ -63,7 +63,8 @@ class ContactInformation(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Address")
+        verbose_name=_("Address"),
+        related_name="users"
     )
 
     class Meta:
@@ -88,7 +89,11 @@ class Order(models.Model):
         _("Creation"),
         auto_now_add=True
     )
-    total_price = models.IntegerField(_("Total Price"))
+    last_modification = models.DateTimeField(
+        _("Last Modification"),
+        auto_now=True,
+        editable=False
+    )
 
     class Meta:
         ordering = ["-creation"]
