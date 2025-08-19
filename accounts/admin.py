@@ -8,10 +8,10 @@ from shop import models as shop_models
 
 
 admin.site.register(models.Address)
+admin.site.register(models.Order)
 admin.site.register(shop_models.Category)
 admin.site.register(shop_models.Discount)
 admin.site.register(shop_models.Image)
-admin.site.register(shop_models.Order)
 admin.site.register(shop_models.Product)
 admin.site.register(shop_models.Tag)
 

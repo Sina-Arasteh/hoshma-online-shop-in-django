@@ -68,4 +68,4 @@ class AddressDetail(generics.RetrieveAPIView):
     permission_classes = [IsAdminUser]
 
 
-class ContactInfo()
+# class ContactInfo()

@@ -1,11 +1,13 @@
+{% load i18n %}
+
 <ul class="nav nav-justified bg-primary bg-gradient">
   <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'store:index-page' %}">صفحه اصلی</a>
+    <a class="nav-link text-white" href="{% url 'shop:index-page' %}">{% translate "Home" %}</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link text-white" href="">دسته‌بندی کالاها</a>
+    <a class="nav-link text-white" href="">{% translate "categories" %}</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'account:signup-login' %}">ورود | ثبت‌نام</a>
+    <a class="nav-link text-white" href="">{% translate "Login | SignUp" %}</a>
   </li>
 </ul>

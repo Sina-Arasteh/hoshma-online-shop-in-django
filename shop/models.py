@@ -4,6 +4,14 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
+from django.urls import reverse
+
+
+def product_main_image_upload_to(instance, filename):
+    return f"products/{slugify(instance.title)}/main_image/{filename}"
+
+def product_images_upload_to(instance, filename):
+    return f"products/{slugify(instance.product.title)}/{filename}"
 
 
 class Category(models.Model):
@@ -18,7 +26,7 @@ class Category(models.Model):
         null=True,
         related_name='children'
     )
-    hierarchy = models.IntegerField(editable=False)  # The hierarchy of a root category equals 0.
+    hierarchy = models.PositiveIntegerField(editable=False, default=0)  # The hierarchy of a root category equals 0.
 
     class Meta:
         verbose_name = _("Category")
@@ -79,8 +87,7 @@ class Category(models.Model):
         for parent in all_parents:
             parents.append(parent.name)
         parents = "/".join(parents)
-        return f"{parents}/{self.name}: {self.id}" if parents else f"{self.name}: {self.id}"
-
+        return f"{parents}/{self.name}" if parents else f"{self.name}"
 
 class Discount(models.Model):
     type = models.CharField(
@@ -88,14 +95,17 @@ class Discount(models.Model):
         max_length=10,
         choices=constants.DISCOUNT_CHOICES
     )
-    amount = models.IntegerField(_("Amount"))
+    amount = models.PositiveIntegerField(
+        _("Amount"),
+        validators=[validators.validate_positive_value,]
+    )
     start = models.DateTimeField(
         _("Start"),
-        validators=[validators.not_in_past_validator,]
+        validators=[validators.validate_not_in_past,]
     )
     end = models.DateTimeField(
         _("End"),
-        validators=[validators.not_in_past_validator,]
+        validators=[validators.validate_not_in_past,]
     )
 
     class Meta:
@@ -104,12 +114,15 @@ class Discount(models.Model):
 
     def clean(self):
         super().clean()
+
+        if self.type == "percentage" and self.amount > 100:
+            raise ValidationError({'amount': _("Amount cannot be more than 100 while the discount type is percentage.")})
+
         if self.start >= self.end:
             raise ValidationError({'end': _("Please set a date and time after the date and time of the start.")})
 
     def __str__(self):
         return f"{self.type}: {self.amount}"
-
 
 class Tag(models.Model):
     name = models.CharField(
@@ -125,10 +138,6 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-
-def product_main_image_upload_to(instance, filename):
-    return f"products/{slugify(instance.title)}/main_image/{filename}"
-
 class Product(models.Model):
     title = models.CharField(
         _("Title"),
@@ -137,17 +146,13 @@ class Product(models.Model):
     )
     category = models.ForeignKey(
         Category,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         related_name="products",
         verbose_name=_("Category")
     )
-    main_image = models.ImageField(
-        _("Main Image"),
-        upload_to=product_main_image_upload_to
-    )
-    price = models.IntegerField(
-        _("Price"),
-        validators=[MinValueValidator(0, message=_("Negative inputs are not allowed for this field."))]
+    price = models.PositiveIntegerField(
+        _("Price")
     )
     discount = models.ForeignKey(
         Discount,
@@ -160,11 +165,14 @@ class Product(models.Model):
     tags = models.ManyToManyField(Tag, related_name="products")
     description_brief = models.TextField(_("Brief Description"))
     description = models.TextField(_("Description"))
-    stock = models.IntegerField(
+    stock = models.PositiveIntegerField(
         _("Stock"),
-        validators=[MinValueValidator(0, message=_("Negative inputs are not allowed for this field."))]
+        default=0
     )
-    # slug = models.SlugField(max_length=250, editable=False)
+    # slug = models.SlugField(
+    #     max_length=250,
+    #     editable=False
+    # )
     creation = models.DateTimeField(
         _("Creation"),
         auto_now_add=True,
@@ -181,23 +189,54 @@ class Product(models.Model):
         verbose_name_plural = _("Products")
 
     # def save(self, *args, **kwargs):
-    #     if not self.slug:
-    #         self.slug = slugify(self.title)
+    #     self.slug = slugify(self.title)
     #     super().save(*args, **kwargs)
+
+    def get_final_price(self):
+        if self.discount:
+            if self.discount.type == "fixed":
+                final_price = self.price - self.discount.amount
+                return final_price if final_price > 0 else 0
+            final_price = self.price - (self.price * self.amount / 100)
+            return final_price
+        return self.price
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse("shop:product-detail", kwargs={"pk": self.pk})
 
+class MainImage(models.Model):
+    product = models.OneToOneField(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='main_image',
+        primary_key=True
+    )
+    image = models.ImageField(
+        _("Main Image"),
+        upload_to=product_main_image_upload_to
+    )
+    alt = models.CharField(max_length=100)
 
-def product_images_upload_to(instance, filename):
-    return f"products/{slugify(instance.product.title)}/{filename}"
+    class Meta:
+        verbose_name = _("Main Image")
+        verbose_name_plural = _("Main Images")
+
+    def __str__(self):
+        return f"Main image for {self.product.id}"
 
 class Image(models.Model):
     image = models.ImageField(
         _("Image"),
         upload_to=product_images_upload_to
     )
-
+    alt = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True
+    )
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
