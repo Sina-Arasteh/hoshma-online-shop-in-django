@@ -124,6 +124,9 @@ class Discount(models.Model):
     def __str__(self):
         return f"{self.type}: {self.amount}"
 
+class Coupon(models.Model):
+    pass
+
 class Tag(models.Model):
     name = models.CharField(
         _("Name"),

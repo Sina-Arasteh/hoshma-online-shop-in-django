@@ -75,10 +75,6 @@ class ContactInfo(models.Model):
 
 
 class Order(models.Model):
-    products = models.ManyToManyField(
-        shop_models.Product,
-        verbose_name=_("Products")
-    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -89,13 +85,14 @@ class Order(models.Model):
         _("Creation"),
         auto_now_add=True
     )
-    last_modification = models.DateTimeField(
-        _("Last Modification"),
-        auto_now=True,
-        editable=False
-    )
 
     class Meta:
         ordering = ["-creation"]
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
+    
+    def total_price(self):
+        pass
+
+class OrderItem(models.Model):
+    pass
