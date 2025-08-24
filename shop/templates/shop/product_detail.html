@@ -2,42 +2,42 @@
 {% load i18n %}
 
 {% block body %}
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <img src="{{ product.main_image.url }}" alt="{{ product.main_image.alt }}" width="270px" height="270px"><br>
-      {% for image in product.images %}
-        <img src="{{ image.url }}" alt="{{ image.alt }}" width="72px" height="72px">
-      {% endfor %}
-    </div>
-    <div class="col">
-      <p class="small">{{ product.category }}</p>
-      <p>{{ product.title }}</p>
-      <p>{{ product.description_brief }}</p>
-      <p>{% translate "Tags" %}: {% for tag in product.tags %}<span>{{ tag }}, </span>{% endfor %}</p>
-    </div>
-    <div class="col-2">
-      <p class="card-text text-end {% if product.discount %}text-decoration-line-through{% endif %}">
-        {{ product.price }} {% translate "toman" %}
-      </p>
-      {% if product.discount %}
-        <p class="card-text text-end">
-          {{ product.get_final_price() }} {% translate "toman" %}
-        </p>
-      {% endif %}
-      <form action="{% url 'cart:add' product.pk %}" method="post">
-        {% csrf_token %}
-        <button type="submit" {% if not product.stock %}disabled{% endif %}>{% translate "Add to cart" %}</button>
-        {% if not product.stock %}
-          <p class="small">{% translate "Out of stock" %}</p>
-        {% endif %}
-      </form>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <p>{{ product.description }}</p>
-    </div>
-  </div>
-</div>
+	<div class="container">
+		<div class="row">
+			<div class="col">
+				<img src="{{ product.main_image.url }}" alt="{{ product.main_image.alt }}" width="270px" height="270px"><br>
+				{% for image in product.images %}
+					<img src="{{ image.url }}" alt="{{ image.alt }}" width="72px" height="72px">
+				{% endfor %}
+			</div>
+			<div class="col">
+				<p class="small">{{ product.category }}</p>
+				<p>{{ product.title }}</p>
+				<p>{{ product.description_brief }}</p>
+				<p>{% translate "Tags" %}: {% for tag in product.tags %}<span>{{ tag }}, </span>{% endfor %}</p>
+			</div>
+			<div class="col-2">
+				<p class="card-text text-end {% if product.discount %}text-decoration-line-through{% endif %}">
+					{{ product.price }} {% translate "toman" %}
+				</p>
+				{% if product.discount %}
+					<p class="card-text text-end">
+						{{ product.get_final_price() }} {% translate "toman" %}
+					</p>
+				{% endif %}
+				<form action="{% url 'cart:add' product.pk %}" method="post">
+					{% csrf_token %}
+					<button type="submit" {% if not product.stock %}disabled{% endif %}>{% translate "Add to cart" %}</button>
+					{% if not product.stock %}
+						<p class="small">{% translate "Out of stock" %}</p>
+					{% endif %}
+				</form>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<p>{{ product.description }}</p>
+			</div>
+		</div>
+	</div>
 {% endblock %}

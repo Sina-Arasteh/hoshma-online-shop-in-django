@@ -42,7 +42,6 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.province}/{self.city}/{self.street}/{self.alley}/{self.number}"
 
-
 class ContactInfo(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -73,7 +72,6 @@ class ContactInfo(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -85,14 +83,52 @@ class Order(models.Model):
         _("Creation"),
         auto_now_add=True
     )
+    status = models.CharField(
+        max_length=10,
+        choices=constants.ORDER_STATUS,
+        verbose_name=_("Status"),
+        default='pending'
+    )
 
     class Meta:
         ordering = ["-creation"]
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
-    
+
     def total_price(self):
-        pass
+        return sum(orderitem.item_total_price() for orderitem in self.orderitems)
 
 class OrderItem(models.Model):
-    pass
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='orderitems',
+        verbose_name=_("Order")
+    )
+    product = models.ForeignKey(
+        shop_models.Product,
+        on_delete=models.SET_NULL,
+        related_name='orderitems',
+        null=True,
+        verbose_name=_("Product")
+    )
+    price = models.PositiveIntegerField(_("Price"))
+    discount = models.ForeignKey(
+        shop_models.Discount,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Discount"),
+        null=True
+    )
+    quantity = models.PositiveIntegerField(_("Quantity"))
+
+    def save(self, *args, **kwargs):
+        self.price = self.product.get_final_price()
+        self.discount = self.product.discount
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("Order Item")
+        verbose_name_plural = _("Order Items")
+    
+    def item_total_price(self):
+        return self.price * self.quantity

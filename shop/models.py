@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.urls import reverse
+from django.utils import timezone
 
 
 def product_main_image_upload_to(instance, filename):
@@ -191,17 +192,18 @@ class Product(models.Model):
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
 
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.title)
-    #     super().save(*args, **kwargs)
-
     def get_final_price(self):
         if self.discount:
-            if self.discount.type == "fixed":
+            if self.discount.end < timezone.now():
+                self.discount = None
+                self.save(update_fields=['discount'])
+                return self.price
+            elif self.discount.type == "fixed":
                 final_price = self.price - self.discount.amount
                 return final_price if final_price > 0 else 0
-            final_price = self.price - (self.price * self.amount / 100)
-            return final_price
+            else:
+                final_price = self.price - (self.price * self.amount / 100)
+                return final_price
         return self.price
 
     def __str__(self):

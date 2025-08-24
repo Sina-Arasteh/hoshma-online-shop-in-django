@@ -33,3 +33,12 @@ PROVINCE_CHOICES = [
     ('Sistan_Baluchestan', _('Sistan and Baluchestan')),
     ('Hormozgan', _('Hormozgan')),
 ]
+
+ORDER_STATUS = [
+    ('pending', _('Pending')),
+    ('processing', _('Processing')),
+    ('shipped', _('Shipped')),
+    ('delivered', _('Delivered')),
+    ('cancelled', _('Cancelled')),
+    ('returned', _('Returned')),
+]
