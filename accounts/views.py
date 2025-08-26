@@ -1,8 +1,9 @@
 from django.views import View
-from .forms import CheckoutForm
 from .models import Order, OrderItem
 from shop.models import Product
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from .constants import ORDER_STATUS
 
 
 class Checkout(View):
@@ -23,5 +24,16 @@ class Checkout(View):
                 product=purchase[0],
                 quantity=purchase[1]
             )
+        order = Order.objects.get(pk=order.pk)
         context = {'order': order}
         return render(request, 'accounts/checkout.html', context)
+
+class payment(View):
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        order.status = ORDER_STATUS[1][0]
+        # Riderect the user to the his/her account.
+
+class Account(View):
+    def get(self, request):
+        return render(request, 'accounts/account.html')

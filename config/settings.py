@@ -133,6 +133,12 @@ MEDIA_ROOT = BASE_DIR / "images"
 
 # Auth
 
+AUTH_USER_MODEL = "accounts.CustomUser"
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.auth_backends.PhoneEmailBackend',
+]
+
 LOGIN_REDIRECT_URL = "shop:index-page"
 
 LOGOUT_REDIRECT_URL = "shop:index-page"

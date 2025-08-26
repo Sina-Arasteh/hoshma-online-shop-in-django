@@ -5,9 +5,88 @@ from . import constants
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from shop import models as shop_models
+from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import BaseUserManager
+from django.core.exceptions import MultipleObjectsReturned
 
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email=None, phone=None, password=None, **extra_fields):
+        if email:
+            email = self.normalize_email(email)
+        
+        user = self.model(
+            email=email,
+            phone=phone,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save()
+        return user
+    
+    def create_superuser(self, email=None, phone=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True or extra_fields.get('is_superuser') is not True:
+            raise ValueError(_("Superuser must have is_staff=True and is_superuser=True."))
+        
+        return self.create_user(email=email, phone=phone, password=password, **extra_fields)
+
+    def get_by_natural_key(self, natural_key):
+            if '@' in natural_key:
+                return self.get(email__iexact=self.normalize_email(natural_key))
+            try:
+                return self.get(phone=natural_key)
+            except MultipleObjectsReturned:
+                raise self.model.DoesNotExist
+
+class CustomUser(AbstractUser):
+    username = None
+    email = models.EmailField(
+        _("Email"),
+        unique=True,
+        null=True,
+        blank=True
+    )
+    phone = models.CharField(
+        _("Phone"),
+        max_length=11,
+        validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)],
+        unique=True,
+        null=True,
+        blank=True
+    )
+
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    def clean(self):
+        super().clean()
+        if not self.email and not self.phone:
+            raise ValidationError(_("User instances need at least an email or a phone."))
+        
+        if self.is_staff and not self.email:
+            raise ValidationError(_("Staff members should have an email."))
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.email if self.email else self.phone
 
 class Address(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='addresses',
+        verbose_name=_("User")
+    )
     province = models.CharField(
         _("Province"),
         max_length=30,
@@ -26,7 +105,7 @@ class Address(models.Model):
         max_length=20
     )
     number = models.CharField(
-        # Translators: By 'Number' here means the number in Addresses.
+        # Translators: The 'Number' here means the number in Addresses.
         _("Number"),
         max_length=3
     )
@@ -41,36 +120,6 @@ class Address(models.Model):
     
     def __str__(self):
         return f"{self.province}/{self.city}/{self.street}/{self.alley}/{self.number}"
-
-class ContactInfo(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="contact_info",
-        verbose_name=_("User")
-    )
-    phone = models.CharField(
-        _("Phone"),
-        max_length=11,
-        unique=True,
-        validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)],
-        blank=True
-    )
-    address = models.ForeignKey(
-        Address,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name=_("Address"),
-        related_name="users"
-    )
-
-    class Meta:
-        verbose_name = _("Contact Information")
-    
-    def __str__(self):
-        return self.user.username
 
 class Order(models.Model):
     user = models.ForeignKey(

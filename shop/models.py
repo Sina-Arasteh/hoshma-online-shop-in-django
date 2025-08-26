@@ -43,6 +43,7 @@ class Category(models.Model):
             count += 1
             parent = parent.parent
         self.hierarchy = count
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -121,6 +122,10 @@ class Discount(models.Model):
 
         if self.start >= self.end:
             raise ValidationError({'end': _("Please set a date and time after the date and time of the start.")})
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.type}: {self.amount}"

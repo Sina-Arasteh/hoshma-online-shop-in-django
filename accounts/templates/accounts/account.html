@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block body %}
+  <div>
+    <p>{% translate 'Full Name' %}: {{ request.user.get_full_name() }}</p>
+  </div>
+  <div>orders</div>
+{% endblock %}
