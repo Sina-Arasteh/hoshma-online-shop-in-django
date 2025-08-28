@@ -35,12 +35,15 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email=email, phone=phone, password=password, **extra_fields)
 
     def get_by_natural_key(self, natural_key):
-            if '@' in natural_key:
-                return self.get(email__iexact=self.normalize_email(natural_key))
+            if not natural_key:
+                return None
             try:
-                return self.get(phone=natural_key)
-            except MultipleObjectsReturned:
-                raise self.model.DoesNotExist
+                return self.get(email__iexact=self.normalize_email(natural_key))
+            except self.model.DoesNotExist:
+                try:
+                    return self.get(phone=natural_key)
+                except self.model.DoesNotExist:
+                    return None
 
 class CustomUser(AbstractUser):
     username = None

@@ -2,21 +2,31 @@
 
 <ul class="nav nav-justified bg-primary bg-gradient">
   <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'shop:index-page' %}">{% translate "Home" %}</a>
+    <a class="nav-link text-white" href="{% url 'shop:index-page' %}">
+      {% translate "Home" %}
+    </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link text-white" href="">{% translate "categories" %}</a>
+    <a class="nav-link text-white" href="">
+      {% translate "categories" %}
+    </a>
   </li>
   {% if request.user.is_authenticated %}
     <li class="nav-item">
-      <a class="nav-link text-white" href="">{% translate "Account" %}</a>
+      <a class="nav-link text-white" href="">
+        {% translate "Account" %}
+      </a>
     </li>
   {% else %}
     <li class="nav-item">
-      <a class="nav-link text-white" href="">{% translate "Login | SignUp" %}</a>
+      <a class="nav-link text-white" href="{% url 'accounts:signup-login' %}">
+        {% translate "SignUp | Login" %}
+      </a>
     </li>
   {% endif %}
   <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'cart:cart' %}">{% translate "Cart" %}</a>
+    <a class="nav-link text-white" href="{% url 'cart:cart' %}">
+      {% translate "Cart" %}
+    </a>
   </li>
 </ul>
