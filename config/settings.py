@@ -81,6 +81,14 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            "user_attributes": [
+                'email',
+                'phone',
+                'first_name',
+                'last_name',
+            ],
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -93,6 +101,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'accounts.passsword_validators.MaximumLengthValidator',
+        'OPTIONS': {
+            "max_length": 128,
+        },
     },
 ]
 

@@ -80,4 +80,7 @@ class LogIn(View):
 
 class SignUp(View):
     def get(self, request):
+        return render(request, 'accounts/signup.html')
+    
+    def post(self, request):
         pass
