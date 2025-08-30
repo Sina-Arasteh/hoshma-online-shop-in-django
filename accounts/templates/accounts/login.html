@@ -2,9 +2,10 @@
 {% load i18n %}
 
 {% block body %}
-  <h3>{% translate 'Login' %}</h3>
+  <h3>{% translate 'LogIn' %}</h3>
   <p>{% translate 'Please enter your password' %}</p>
-  <form action="{% url 'accounts:login' %}" method="post">
+  <form action="{% url 'accounts:login' %}" method="post" novalidate>
+    {% csrf_token %}
     <input type="password" name="password" class="form-control">
     {% if error %}
       <p class="small text-danger">

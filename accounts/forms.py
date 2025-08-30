@@ -4,13 +4,12 @@ import re
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import AuthenticationForm
-from .models import ContactInfo
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
-user_model = get_user_model()
+User = get_user_model()
 
 def get_max_password_length(default=128):
     for validator in settings.AUTH_PASSWORD_VALIDATORS:
@@ -39,10 +38,10 @@ class SignUpLogInForm(forms.Form):
                 raise ValidationError(_("The user input is invalid."))
         return user_input
 
-class LogIn(forms.Form):
+class LogInForm(forms.Form):
     password = forms.CharField(max_length=128)
 
-class SignUp(forms.Form):
+class SignUpForm(forms.Form):
     first_name = forms.CharField(
         label=_("First Name"),
         max_length=50,
@@ -74,8 +73,8 @@ class SignUp(forms.Form):
         """Checks if email is duplicate"""
         email = self.cleaned_data['email']
         try:
-            user_model.objects.get(email__iexact=email)
-        except user_model.DoesNotExist:
+            User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
             return email
         raise ValidationError(_("The email address has been registered before."))
 
@@ -83,8 +82,8 @@ class SignUp(forms.Form):
         """Checks if phone is duplicate"""
         phone = self.cleaned_data['phone']
         try:
-            user_model.objects.get(phone=phone)
-        except user_model.DoesNotExist:
+            User.objects.get(phone=phone)
+        except User.DoesNotExist:
             return phone
         raise ValidationError(_("The phone number has been registered before."))
 
@@ -95,7 +94,7 @@ class SignUp(forms.Form):
         phone = self.cleaned_data.get('phone')
         first_name = self.cleaned_data.get('first_name')
         last_name = self.cleaned_data.get('last_name')
-        user = user_model(
+        user = User(
             email=email,
             phone=phone,
             first_name=first_name,

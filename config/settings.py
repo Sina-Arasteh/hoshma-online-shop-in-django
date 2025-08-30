@@ -153,9 +153,9 @@ AUTHENTICATION_BACKENDS = [
     'accounts.auth_backends.PhoneEmailBackend',
 ]
 
-LOGIN_REDIRECT_URL = "shop:index-page"
+LOGIN_REDIRECT_URL = "shop:home"
 
-LOGOUT_REDIRECT_URL = "shop:index-page"
+LOGOUT_REDIRECT_URL = "shop:home"
 
 LOGIN_URL = "accounts:signup-login"
 

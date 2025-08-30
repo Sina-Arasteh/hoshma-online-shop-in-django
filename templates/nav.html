@@ -2,7 +2,7 @@
 
 <ul class="nav nav-justified bg-primary bg-gradient">
   <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'shop:index-page' %}">
+    <a class="nav-link text-white" href="{% url 'shop:home' %}">
       {% translate "Home" %}
     </a>
   </li>
@@ -20,7 +20,7 @@
   {% else %}
     <li class="nav-item">
       <a class="nav-link text-white" href="{% url 'accounts:signup-login' %}">
-        {% translate "SignUp | Login" %}
+        {% translate "SignUp | LogIn" %}
       </a>
     </li>
   {% endif %}
