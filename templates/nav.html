@@ -13,7 +13,7 @@
   </li>
   {% if request.user.is_authenticated %}
     <li class="nav-item">
-      <a class="nav-link text-white" href="">
+      <a class="nav-link text-white" href="{% url 'accounts:account' %}">
         {% translate "Account" %}
       </a>
     </li>

@@ -7,6 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from .models import Address
 
 
 User = get_user_model()
@@ -37,9 +38,6 @@ class SignUpLogInForm(forms.Form):
             except ValidationError:
                 raise ValidationError(_("The user input is invalid."))
         return user_input
-
-class LogInForm(forms.Form):
-    password = forms.CharField(max_length=128)
 
 class SignUpForm(forms.Form):
     first_name = forms.CharField(
@@ -110,6 +108,19 @@ class SignUpForm(forms.Form):
         if password_confirmation != password:
             raise ValidationError(_("Password confirmation is not correct."))
         return password_confirmation
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+class LogInForm(forms.Form):
+    password = forms.CharField(max_length=128)
+
+class AddAddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        exclude = ['user',]
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

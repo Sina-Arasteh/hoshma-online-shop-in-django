@@ -21,6 +21,9 @@
       <p>{% translate "Total Price" %}: {{ order.total_price() }}</p>
 			<div>coupon</div>
 		</div>
+    <div class="row">
+      customer note
+    </div>
 		<div class="row">
       <a href="{% url 'accounts:payment' pk=order.pk %}" class="btn btn-success">{% translate 'Make a payment' %}</a>
 		</div>

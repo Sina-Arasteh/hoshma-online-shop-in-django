@@ -85,7 +85,7 @@ class CustomUser(AbstractUser):
 
 class Address(models.Model):
     user = models.ForeignKey(
-        CustomUser,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='addresses',
         verbose_name=_("User")
@@ -97,20 +97,20 @@ class Address(models.Model):
     )
     city = models.CharField(
         _("City"),
-        max_length=20
+        max_length=60
     )
     street = models.CharField(
         _("Street"),
-        max_length=20
+        max_length=60
     )
     alley = models.CharField(
         _("Alley"),
-        max_length=20
+        max_length=60
     )
     number = models.CharField(
         # Translators: The 'Number' here means the number in Addresses.
         _("Number"),
-        max_length=3
+        max_length=5
     )
     zip_code = models.CharField(
         _("Zip Code"),
@@ -131,6 +131,7 @@ class Order(models.Model):
         related_name="orders",
         verbose_name=_("User")
     )
+    # address = models
     creation = models.DateTimeField(
         _("Creation"),
         auto_now_add=True
@@ -141,6 +142,7 @@ class Order(models.Model):
         verbose_name=_("Status"),
         default='pending'
     )
+    customer_note = models.TextField()
 
     class Meta:
         ordering = ["-creation"]

@@ -2,8 +2,75 @@
 {% load i18n %}
 
 {% block body %}
+  <div class="card rounded-1 mb-4">
+    <div class="card-header fw-medium bg-danger-subtle">
+      {% translate 'Personal Information' %}
+    </div>
+    <div class="card-body p-4 bg-warning-subtle">
+      <p>{% translate 'Full Name' %}: {{ full_name }}</p>
+      {% if phone %}
+          <p>{% translate 'Phone' %}: {{ phone }}</p>
+      {% endif %}
+      {% if email %}
+          <p>{% translate 'Email' %}: {{ email }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card rounded-1 mb-4">
+    <div class="card-header fw-medium bg-danger-subtle">
+      {% translate 'Addresses' %}
+    </div>
+    <div class="card-body p-4 bg-warning-subtle">
+      <div>
+        {% for address in addresses %}
+          <div class="mb-3">
+            <p>{{ address }}</p>
+            <form action="{% url 'accounts:remove-address' pk=address.pk %}" method="post" novalidate>
+              {% csrf_token %}
+              <button type="submit">{% translate 'Remove Address' %}</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+      <div>
+        <a href="{% url 'accounts:add-address' %}" class="link-underline-opacity-0">
+          {% translate 'Add Address' %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card rounded-1 mb-4">
+    <div class="card-header fw-medium bg-danger-subtle">
+      {% translate 'Orders' %}
+    </div>
+    <div class="card-body p-4 bg-warning-subtle"></div>
+  </div>
+
+
+
   <div>
-    <p>{% translate 'Full Name' %}: {{ request.user.get_full_name() }}</p>
+    <p>{% translate 'Full Name' %}: {{ full_name }}</p>
+  </div>
+  <div class="container">
+    <div class="row">
+      {% if phone %}
+        <div class="col-6">
+          <p>{% translate 'Phone' %}: {{ phone }}</p>
+        </div>
+      {% endif %}
+      {% if email %}
+        <div class="col-6">
+          <p>{% translate 'Email' %}: {{ email }}</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  <div>
+    {% for address in addresses %}
+      <p>{{ address }}</p>
+    {% endfor %}
   </div>
   <div>orders</div>
 {% endblock %}

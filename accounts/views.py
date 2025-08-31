@@ -4,7 +4,7 @@ from shop.models import Product
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from .constants import ORDER_STATUS
-from .forms import SignUpLogInForm, LogInForm, SignUpForm
+from .forms import SignUpLogInForm, SignUpForm, LogInForm, AddAddressForm
 from django.utils.translation import gettext as _
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
@@ -62,25 +62,6 @@ class SignUpLogIn(View):
         return render(request, 'accounts/signup_login.html', context)
 
 # Write a test to give permission only to users with a session that has 'identifier_key' and 'identifier_value'
-class LogIn(View):
-    def get(self, request):
-        return render(request, 'accounts/login.html')
-    
-    def post(self, request):
-        password_form = LogInForm(request.POST)
-        if password_form.is_valid():
-            identifier=request.session.get('identifier_value')
-            password = password_form.cleaned_data.get('password')
-            user = authenticate(identifier=identifier, password=password)
-            if user:
-                login(request, user)
-                del request.session['identifier_type']
-                del request.session['identifier_value']
-                return redirect('shop:home')
-        context = {'error': True}
-        return render(request, 'accounts/login.html', context)
-
-# Write a test to give permission only to users with a session that has 'identifier_key' and 'identifier_value'
 class SignUp(View):
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
@@ -120,6 +101,56 @@ class SignUp(View):
         }
         return render(request, 'accounts/signup.html', context)
 
+# Write a test to give permission only to users with a session that has 'identifier_key' and 'identifier_value'
+class LogIn(View):
+    def get(self, request):
+        return render(request, 'accounts/login.html')
+    
+    def post(self, request):
+        password_form = LogInForm(request.POST)
+        if password_form.is_valid():
+            identifier=request.session.get('identifier_value')
+            password = password_form.cleaned_data.get('password')
+            user = authenticate(identifier=identifier, password=password)
+            if user:
+                login(request, user)
+                del request.session['identifier_type']
+                del request.session['identifier_value']
+                return redirect('shop:home')
+        context = {'error': True}
+        return render(request, 'accounts/login.html', context)
+
+# login required
 class Account(View):
     def get(self, request):
-        return render(request, 'accounts/account.html')
+        user = request.user
+        context = {
+            'full_name': user.get_full_name(),
+            'phone': user.phone,
+            'email': user.email,
+            'addresses': user.addresses,
+            'orders': user.orders
+        }
+        return render(request, 'accounts/account.html', context)
+
+# login required
+class AddAddress(View):
+    def get(self, request):
+        address_form = AddAddressForm()
+        context = {'form': address_form}
+        return render(request, 'accounts/add_address.html', context)
+
+    def post(self, request):
+        address_form = AddAddressForm(request.POST)
+        if address_form.is_valid():
+            address_form.save(commit=False)
+            address_form.user = request.user
+            address_form.save()
+            return redirect
+        context = {'form': address_form}
+        return render(request, 'accounts/add_address.html', context)
+
+class RemoveAddress(View):
+    def get(self, request, pk):
+        # Check if the pk exists
+        pass
