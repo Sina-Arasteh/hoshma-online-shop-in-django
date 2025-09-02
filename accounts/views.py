@@ -27,6 +27,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 User = get_user_model()
 
+
+# Test the user in order to have a non empty request.session['cart']
+# Order.address
+# User can jump from the checkout page to another page just by entering an url into the urlbar. So, we need to handle the Order.status in such a situation
 class Checkout(LoginRequiredMixin, View):
     def get(self, request):
         order = Order.objects.create(user=request.user)
@@ -49,6 +53,9 @@ class Checkout(LoginRequiredMixin, View):
         context = {'order': order}
         return render(request, 'accounts/checkout.html', context)
 
+# login required (redirect the user to the cart page)
+# Check the status of the order (not being cancelled or ...) and being the order of the user himself/herself.
+# Order.address
 class payment(View):
     def get(self, request, pk):
         order = get_object_or_404(Order, pk=pk)
@@ -145,6 +152,8 @@ class LogIn(View):
         return render(request, 'accounts/login.html', context)
 
 # login required
+# Users can have at most five addresses.
+# If a user have the max number of addresses disable the 'add address' button.
 class Account(View):
     def get(self, request):
         user = request.user
@@ -158,6 +167,7 @@ class Account(View):
         return render(request, 'accounts/account.html', context)
 
 # login required
+# Only users that the number of their addresses is less than 5 can access this view.
 class AddAddress(View):
     def get(self, request):
         address_form = AddAddressForm()
@@ -174,6 +184,7 @@ class AddAddress(View):
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
 
+# login required
 class RemoveAddress(View):
     def get(self, request, pk):
         # Check if the pk exists

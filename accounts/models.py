@@ -1,14 +1,18 @@
 from django.db import models
 from django.core.validators import RegexValidator
 import re
-from . import constants
+from .constants import (
+    PROVINCE_CHOICES,
+    ORDER_STATUS
+)
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from shop import models as shop_models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import (
+    AbstractUser,
+    BaseUserManager
+)
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import BaseUserManager
-from django.core.exceptions import MultipleObjectsReturned
 
 
 class CustomUserManager(BaseUserManager):
@@ -97,7 +101,7 @@ class Address(models.Model):
     province = models.CharField(
         _("Province"),
         max_length=30,
-        choices=constants.PROVINCE_CHOICES
+        choices=PROVINCE_CHOICES
     )
     city = models.CharField(
         _("City"),
@@ -142,7 +146,7 @@ class Order(models.Model):
     )
     status = models.CharField(
         max_length=10,
-        choices=constants.ORDER_STATUS,
+        choices=ORDER_STATUS,
         verbose_name=_("Status"),
         default='pending'
     )

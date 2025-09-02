@@ -3,6 +3,10 @@
 
 {% block body %}
   <div class="container mt-3">
+    <h3>{% translate 'Cart' %}</h3>
+    {% if not purchases %}
+      <p>{% translate 'Your cart is empty' %}.</p>
+    {% endif %}
     {% for purchase in purchases %}
       <div class="row mb-3 border border-black rounded">
         <div class="col-3">
@@ -22,7 +26,9 @@
 		</div>
 		<div class="row">
       <div class="d-grid gap-2 col-6 mx-auto">
-        <a {% if purchases %}href="{% url 'accounts:checkout' %}" class="btn btn-success"{% else %}class="btn btn-success disabled"{% endif %}>{% translate 'Proceed to checkout' %}</a>
+        <a {% if purchases %}href="{% url 'accounts:checkout' %}" class="btn btn-success"{% else %}class="btn btn-success disabled"{% endif %}>
+          {% translate 'Proceed to checkout' %}
+        </a>
 		  </div>
     </div>
   </div>

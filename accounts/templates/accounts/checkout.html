@@ -3,6 +3,7 @@
 
 {% block body %}
   <div class="container">
+    <h3>{% translate 'Checkout' %}</h3>
     {% for orderitem in order.orderitems %}
       <div class="row">
         <div class="col-3">
@@ -26,6 +27,8 @@
     </div>
 		<div class="row">
       <a href="{% url 'accounts:payment' pk=order.pk %}" class="btn btn-success">{% translate 'Make a payment' %}</a>
+      <!-- cancel the order and set the order.status to 'canceled' -->
+      <!-- Ask the user to chooce the address to which the order should be sent (Set the Order.address) -->
 		</div>
   </div>
 {% endblock %}

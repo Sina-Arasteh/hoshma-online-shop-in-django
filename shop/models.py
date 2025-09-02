@@ -1,5 +1,6 @@
 from django.db import models
-from . import constants, validators
+from . import validators
+from .constants import DISCOUNT_CHOICES
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -95,7 +96,7 @@ class Discount(models.Model):
     type = models.CharField(
         _('Type'),
         max_length=10,
-        choices=constants.DISCOUNT_CHOICES
+        choices=DISCOUNT_CHOICES
     )
     amount = models.PositiveIntegerField(
         _("Amount"),
@@ -178,10 +179,6 @@ class Product(models.Model):
         _("Stock"),
         default=0
     )
-    # slug = models.SlugField(
-    #     max_length=250,
-    #     editable=False
-    # )
     creation = models.DateTimeField(
         _("Creation"),
         auto_now_add=True,

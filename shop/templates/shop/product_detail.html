@@ -25,12 +25,15 @@
 						{{ product.get_final_price }} {% translate "toman" %}
 					</p>
 				{% endif %}
-				<form action="{% url 'cart:add' product.pk %}" method="post">
-					{% csrf_token %}
-					<button type="submit" {% if not product.stock %}disabled{% endif %}>{% translate "Add to cart" %}</button>
-					{% if not product.stock %}
-						<p class="small">{% translate "Out of stock" %}</p>
-					{% endif %}
+				<form {% if product.stock %}action="{% url 'cart:add' product.pk %}"{% endif %} method="post">
+				  {% csrf_token %}
+				  <button type="submit" {% if not product.stock %}disabled{% endif %}>
+				    {% if product.stock %}
+				      {% translate "Add to cart" %}
+				    {% else %}
+				      {% translate "Out of stock" %}
+				    {% endif %}
+				  </button>
 				</form>
 			</div>
 		</div>
