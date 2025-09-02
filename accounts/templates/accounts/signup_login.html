@@ -2,17 +2,21 @@
 {% load i18n %}
 
 {% block body %}
-  <h3>{% translate 'SignUp | LogIn' %}</h3>
-  <p>{% translate 'Hello!' %}</p>
-  <p>{% translate 'Please enter your phone or email' %}</p>
-  <form action="{% url 'accounts:signup-login' %}" method="post" novalidate>
-    {% csrf_token %}
-    <input type="text" name="identifier_value" class="form-control">
-    {% if error %}
-      <p class="small text-danger">
-        {% translate "The phone number or the email address is invalid." %}
-      </p>
-    {% endif %}
-    <button type="submit">{% translate 'Enter' %}</button>
-  </form>
+  <div class="container mt-5 p-4 border border-black rounded bg-success-subtle">
+    <h3>{% translate 'SignUp | LogIn' %}</h3>
+    <p>{% translate 'Hello!' %}</p>
+    <p>{% translate 'Please enter your phone or email' %}</p>
+    <form action="{% url 'accounts:signup-login' %}" method="post" novalidate>
+      {% csrf_token %}
+      <input type="text" name="identifier_value" class="form-control" autofocus>
+      {% if error %}
+        <p class="small text-danger">
+          {% translate "The phone number or the email address is invalid." %}
+        </p>
+      {% endif %}
+      <div class="d-grid gap-2 col-6 mx-auto mt-4">
+        <button type="submit" class="btn btn-info">{% translate 'Enter' %}</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}

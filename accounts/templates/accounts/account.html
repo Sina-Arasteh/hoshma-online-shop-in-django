@@ -2,69 +2,71 @@
 {% load i18n %}
 
 {% block body %}
-  <div class="card rounded-1 mb-4">
-    <div class="card-header fw-medium bg-danger-subtle">
-      {% translate 'Personal Information' %}
+  <div class="container mt-4">
+    <div class="card rounded-1 mb-4 border border-black rounded">
+      <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
+        {% translate 'Personal Information' %}
+      </div>
+      <div class="card-body p-4 bg-warning-subtle">
+        <p>{% translate 'Full Name' %}: {{ full_name }}</p>
+        {% if phone %}
+            <p>{% translate 'Phone' %}: {{ phone }}</p>
+        {% endif %}
+        {% if email %}
+            <p>{% translate 'Email' %}: {{ email }}</p>
+        {% endif %}
+      </div>
     </div>
-    <div class="card-body p-4 bg-warning-subtle">
-      <p>{% translate 'Full Name' %}: {{ full_name }}</p>
-      {% if phone %}
-          <p>{% translate 'Phone' %}: {{ phone }}</p>
-      {% endif %}
-      {% if email %}
-          <p>{% translate 'Email' %}: {{ email }}</p>
-      {% endif %}
-    </div>
-  </div>
 
-  <div class="card rounded-1 mb-4">
-    <div class="card-header fw-medium bg-danger-subtle">
-      {% translate 'Addresses' %}
+    <div class="card rounded-1 mb-4 border border-black rounded">
+      <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
+        {% translate 'Addresses' %}
+      </div>
+      <div class="card-body p-4 bg-warning-subtle">
+        <div>
+          {% for address in addresses %}
+            <div class="mb-3">
+              <p>{{ address }}</p>
+              <form action="{% url 'accounts:remove-address' pk=address.pk %}" method="post" novalidate>
+                {% csrf_token %}
+                <button type="submit">{% translate 'Remove Address' %}</button>
+              </form>
+            </div>
+          {% endfor %}
+        </div>
+        <div>
+          <a href="{% url 'accounts:add-address' %}" class="link-underline-opacity-0">
+            {% translate 'Add Address' %}
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="card-body p-4 bg-warning-subtle">
-      <div>
-        {% for address in addresses %}
-          <div class="mb-3">
-            <p>{{ address }}</p>
-            <form action="{% url 'accounts:remove-address' pk=address.pk %}" method="post" novalidate>
-              {% csrf_token %}
-              <button type="submit">{% translate 'Remove Address' %}</button>
-            </form>
+
+    <div class="card rounded-1 mb-4 border border-black rounded">
+      <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
+        {% translate 'Orders' %}
+      </div>
+      <div class="card-body p-4 bg-warning-subtle">
+        {% for order in Orders %}
+          <div class="mb-3 bg-secondary">
+            <p>
+              <span>{% translate 'Order Status' %}: {{ order.status }}</span>
+              <span>{% translate 'Order Creation' %}: {{ order.creation }}</span>
+            </p>
+            <ol class="list-group">
+              <li class="list-group-item text-center">{% translate 'Order Items' %}</li>
+              {% for orderitem in order.orderitems %}
+                <li class="list-group-item">{{ orderitem.product.title }} {% if orderitem.discount %}({% translate 'discount' %}){% endif %}: {{ orderitem.price }} {% translate "toman" %} &times; {{ orderitem.quantity }}</li>
+              {% endfor %}
+            </ol>
+            <p>{% translate 'Total Price' %}: {{ order.total_price }} {% translate "toman" %}</p>
+            <!-- {% if coupon %}<p>{% translate 'Coupon' %}: </p>{% endif %} -->
+            <p>{% translate 'Amount Paid' %}: {% translate "toman" %}</p>
+            <p>{% translate 'Address' %}: {{ order.address }}</p>
+            <p>{% translate 'Customer Note' %}: {{ order.customer_note }}</p>
           </div>
         {% endfor %}
       </div>
-      <div>
-        <a href="{% url 'accounts:add-address' %}" class="link-underline-opacity-0">
-          {% translate 'Add Address' %}
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="card rounded-1 mb-4">
-    <div class="card-header fw-medium bg-danger-subtle">
-      {% translate 'Orders' %}
-    </div>
-    <div class="card-body p-4 bg-warning-subtle">
-      {% for order in Orders %}
-        <div class="mb-3 bg-secondary">
-          <p>
-            <span>{% translate 'Order Status' %}: {{ order.status }}</span>
-            <span>{% translate 'Order Creation' %}: {{ order.creation }}</span>
-          </p>
-          <ol class="list-group">
-            <li class="list-group-item text-center">{% translate 'Order Items' %}</li>
-            {% for orderitem in order.orderitems %}
-              <li class="list-group-item">{{ orderitem.product.title }} {% if orderitem.discount %}({% translate 'discount' %}){% endif %}: {{ orderitem.price }} {% translate "toman" %} &times; {{ orderitem.quantity }}</li>
-            {% endfor %}
-          </ol>
-          <p>{% translate 'Total Price' %}: {{ order.total_price() }} {% translate "toman" %}</p>
-          <!-- {% if coupon %}<p>{% translate 'Coupon' %}: </p>{% endif %} -->
-          <p>{% translate 'Amount Paid' %}: {% translate "toman" %}</p>
-          <p>{% translate 'Address' %}: {{ order.address }}</p>
-          <p>{% translate 'Customer Note' %}: {{ order.customer_note }}</p>
-        </div>
-      {% endfor %}
     </div>
   </div>
 {% endblock %}

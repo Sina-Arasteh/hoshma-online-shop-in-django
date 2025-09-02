@@ -11,5 +11,5 @@ urlpatterns = [
     path('add-address/', views.AddAddress.as_view(), name='add-address'),
     path('remove-address/<int:pk>/', views.RemoveAddress.as_view(), name='remove-address'),
     path('checkout/', views.Checkout.as_view(), name="checkout"),
-    path('payment/<int:pk>/', views, name='payment'),
+    # path('payment/<int:pk>/', views, name='payment'),
 ]

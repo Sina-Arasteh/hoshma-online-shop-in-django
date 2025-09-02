@@ -1,18 +1,33 @@
 from django.views import View
-from .models import Order, OrderItem
+from .models import (
+    Order,
+    OrderItem
+)
 from shop.models import Product
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import (
+    get_object_or_404,
+    redirect,
+    render
+)
 from .constants import ORDER_STATUS
-from .forms import SignUpLogInForm, SignUpForm, LogInForm, AddAddressForm
+from .forms import (
+    SignUpLogInForm,
+    SignUpForm,
+    LogInForm,
+    AddAddressForm
+)
 from django.utils.translation import gettext as _
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import get_user_model
+from django.contrib.auth import (
+    authenticate,
+    login,
+    get_user_model
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 User = get_user_model()
 
-class Checkout(View):
+class Checkout(LoginRequiredMixin, View):
     def get(self, request):
         order = Order.objects.create(user=request.user)
         cart = request.session.pop('cart', {})
@@ -42,8 +57,10 @@ class payment(View):
 
 class SignUpLogIn(View):
     def get(self, request):
+        next_url = request.GET.get('next')
+        request.session['next'] = next_url
         return render(request, 'accounts/signup_login.html')
-    
+
     def post(self, request):
         form = SignUpLogInForm(request.POST)
         if form.is_valid():
@@ -74,9 +91,9 @@ class SignUp(View):
         return render(request, 'accounts/signup.html', context)
 
     def post(self, request):
-        signup_form = SignUpForm(request.POST)
         identifier_type = request.session.get('identifier_type')
         identifier_value = request.session.get('identifier_value')
+        signup_form = SignUpForm(request.POST)
         if signup_form.is_valid():
             user = User(
                 first_name=signup_form.cleaned_data.get('first_name'),
@@ -84,16 +101,15 @@ class SignUp(View):
             )
             if identifier_type == 'email':
                 user.email = identifier_value
-                user.phone = signup_form.cleaned_data.get('phone')
             else:
                 user.phone = identifier_value
-                user.email = signup_form.cleaned_data.get('email')
             user.set_password(signup_form.cleaned_data.get('password'))
             user.save()
             login(request, user)
             del request.session['identifier_type']
             del request.session['identifier_value']
-            return redirect('shop:home')
+            next_url = request.session.pop('next', None)
+            return redirect(next_url or 'shop:home')
         context = {
             'form': signup_form,
             'identifier_type': identifier_type,
@@ -104,7 +120,14 @@ class SignUp(View):
 # Write a test to give permission only to users with a session that has 'identifier_key' and 'identifier_value'
 class LogIn(View):
     def get(self, request):
-        return render(request, 'accounts/login.html')
+        identifier_type = request.session.get('identifier_type')
+        identifier_value = request.session.get('identifier_value')
+        if identifier_type == 'email':
+            user = User.objects.get(email__iexact=identifier_value)
+        else:
+            user = User.objects.get(phone=identifier_value)
+        context = {'user': user}
+        return render(request, 'accounts/login.html', context)
     
     def post(self, request):
         password_form = LogInForm(request.POST)
@@ -116,7 +139,8 @@ class LogIn(View):
                 login(request, user)
                 del request.session['identifier_type']
                 del request.session['identifier_value']
-                return redirect('shop:home')
+                next_url = request.session.pop('next', None)
+                return redirect(next_url or 'shop:home')
         context = {'error': True}
         return render(request, 'accounts/login.html', context)
 
@@ -128,7 +152,7 @@ class Account(View):
             'full_name': user.get_full_name(),
             'phone': user.phone,
             'email': user.email,
-            'addresses': user.addresses,
+            'addresses': user.addresses.all(),
             'orders': user.orders
         }
         return render(request, 'accounts/account.html', context)

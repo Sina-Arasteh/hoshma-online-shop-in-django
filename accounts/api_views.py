@@ -1,11 +1,11 @@
-from . import forms, models, serializers
-from django.contrib.auth.models import User
-from django.contrib.auth import views as auth_views, login
-from django.utils.translation import gettext as _
-from rest_framework import status, generics
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAdminUser
+# from . import forms, models, serializers
+# from django.contrib.auth.models import User
+# from django.contrib.auth import views as auth_views, login
+# from django.utils.translation import gettext as _
+# from rest_framework import status, generics
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from rest_framework.permissions import IsAdminUser
 
 
 # class SignUpLoginAPIView(APIView):
@@ -56,16 +56,16 @@ from rest_framework.permissions import IsAdminUser
 #         return initial
 
 
-class AddressList(generics.ListAPIView):
-    queryset = models.Address.objects.all()
-    serializer_class = serializers.AddressReadSerializer
-    permission_classes = [IsAdminUser]
+# class AddressList(generics.ListAPIView):
+#     queryset = models.Address.objects.all()
+#     serializer_class = serializers.AddressReadSerializer
+#     permission_classes = [IsAdminUser]
 
 
-class AddressDetail(generics.RetrieveAPIView):
-    queryset = models.Address.objects.all()
-    serializer_class = serializers.AddressReadSerializer
-    permission_classes = [IsAdminUser]
+# class AddressDetail(generics.RetrieveAPIView):
+#     queryset = models.Address.objects.all()
+#     serializer_class = serializers.AddressReadSerializer
+#     permission_classes = [IsAdminUser]
 
 
 # class ContactInfo()

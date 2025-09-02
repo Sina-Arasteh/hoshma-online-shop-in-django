@@ -25,7 +25,7 @@ class CustomUserManager(BaseUserManager):
         user.save()
         return user
     
-    def create_superuser(self, email=None, phone=None, password=None, **extra_fields):
+    def create_superuser(self, email, phone=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -68,12 +68,16 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
+    class Meta:
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
+
     def clean(self):
         super().clean()
         if not self.email and not self.phone:
             raise ValidationError(_("User instances need at least an email or a phone."))
         
-        if self.is_staff and not self.email:
+        if (self.is_staff or self.is_superuser) and not self.email:
             raise ValidationError(_("Staff members should have an email."))
 
     def save(self, *args, **kwargs):
@@ -142,7 +146,7 @@ class Order(models.Model):
         verbose_name=_("Status"),
         default='pending'
     )
-    customer_note = models.TextField()
+    customer_note = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-creation"]

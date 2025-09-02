@@ -13,7 +13,7 @@ class Add(View):
         except KeyError:
             cart[pk] = 1
         request.session['cart'] = cart
-        return redirect(reverse("product-detail", args=[pk,]))
+        return redirect(reverse("product-detail", args=[pk]))
 
 class CartPage(View):
     def get(self, request):
@@ -26,5 +26,5 @@ class CartPage(View):
                 purchases.append(purchase)
             except:
                 continue
-        context = {'purchases': purchases,}
+        context = {'purchases': purchases}
         return render(request, "cart/cart.html", context)

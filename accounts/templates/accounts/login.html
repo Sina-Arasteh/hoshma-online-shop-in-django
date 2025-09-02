@@ -2,16 +2,21 @@
 {% load i18n %}
 
 {% block body %}
-  <h3>{% translate 'LogIn' %}</h3>
-  <p>{% translate 'Please enter your password' %}</p>
-  <form action="{% url 'accounts:login' %}" method="post" novalidate>
-    {% csrf_token %}
-    <input type="password" name="password" class="form-control">
-    {% if error %}
-      <p class="small text-danger">
-        {% translate "The password is not correct." %}
-      </p>
-    {% endif %}
-    <button type="submit">{% translate 'Enter' %}</button>
-  </form>
+  <div class="container mt-3 p-4 border border-black rounded">
+    <h3>{% translate 'LogIn' %}</h3>
+    <h5>{% translate 'Welcome' %} {{ user.get_short_name }}</h5>
+    <p>{% translate 'Please enter your password' %}</p>
+    <form action="{% url 'accounts:login' %}" method="post" novalidate>
+      {% csrf_token %}
+      <input type="password" name="password" class="form-control" autofocus>
+      {% if error %}
+        <p class="small text-danger">
+          {% translate "The password is not correct." %}
+        </p>
+      {% endif %}
+      <div class="d-grid gap-2 col-6 mx-auto mt-4">
+        <button type="submit" class="btn btn-primary mt-3">{% translate 'Enter' %}</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}

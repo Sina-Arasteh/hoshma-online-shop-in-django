@@ -100,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
     {
-        'NAME': 'accounts.passsword_validators.MaximumLengthValidator',
+        'NAME': 'accounts.password_validators.MaximumLengthValidator',
         'OPTIONS': {
             "max_length": 128,
         },
@@ -153,11 +153,11 @@ AUTHENTICATION_BACKENDS = [
     'accounts.auth_backends.PhoneEmailBackend',
 ]
 
+LOGIN_URL = "accounts:signup-login"
+
 LOGIN_REDIRECT_URL = "shop:home"
 
 LOGOUT_REDIRECT_URL = "shop:home"
-
-LOGIN_URL = "accounts:signup-login"
 
 
 # Localization

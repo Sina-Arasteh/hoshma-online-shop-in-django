@@ -15,11 +15,11 @@
               </p>
               {% if product.discount %}
                 <p class="card-text text-end">
-                  {{ product.get_final_price() }} {% translate "toman" %}
+                  {{ product.get_final_price }} {% translate "toman" %}
                 </p>
               {% endif %}
             </div>
-            <a href="{{ product.get_absolute_url() }}" class="stretched-link" target="_blank"></a>
+            <a href="{{ product.get_absolute_url }}" class="stretched-link" target="_blank"></a>
           </div>
         </div>
       {% endfor %}

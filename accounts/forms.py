@@ -50,9 +50,13 @@ class SignUpForm(forms.Form):
         max_length=50,
         min_length=3
     )
-    email = forms.EmailField(label=_("Email"))
+    email = forms.EmailField(
+        label=_("Email"),
+        required=False
+    )
     phone = forms.CharField(
         label=_("Phone"),
+        required=False,
         max_length=11,
         validators=[RegexValidator(regex=r"^09\d{9}$", flags=re.A)]
     )

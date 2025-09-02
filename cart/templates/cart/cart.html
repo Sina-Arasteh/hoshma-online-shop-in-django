@@ -2,26 +2,28 @@
 {% load i18n %}
 
 {% block body %}
-  <div class="container">
+  <div class="container mt-3">
     {% for purchase in purchases %}
-      <div class="row">
+      <div class="row mb-3 border border-black rounded">
         <div class="col-3">
           <img src="{{ purchase.0.main_images.url }}" alt="{{ purchase.0.main_images.alt }}" width="72px" height="72px">
         </div>
         <div class="col-6">
           <h3>{{ purchase.0.title }}</h3>
-          <p>{% translate "Unit Price" %}: <span>{{ purchase.0.get_final_price() }}</span></p>
+          <p>{% translate "Unit Price" %}: <span>{{ purchase.0.get_final_price }}</span></p>
         </div>
         <div class="col-3">
 					<p>{% translate "Quantity" %}: <span>{{ purchase.1 }}</span></p>
 				</div>
       </div>
     {% endfor %}
-		<div class="row">
+		<div class="row mb-3 border border-black rounded">
       <p>{% translate "Total Price" %}: <span id="total-price"></span></p>
 		</div>
 		<div class="row">
-      <a href="{% url 'accounts:checkout' %}" class="btn btn-success" {% if not purchases %}disabled{% endif %}>{% translate 'Proceed to checkout' %}</a>
-		</div>
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <a {% if purchases %}href="{% url 'accounts:checkout' %}" class="btn btn-success"{% else %}class="btn btn-success disabled"{% endif %}>{% translate 'Proceed to checkout' %}</a>
+		  </div>
+    </div>
   </div>
 {% endblock %}

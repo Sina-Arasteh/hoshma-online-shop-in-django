@@ -22,7 +22,7 @@
 				</p>
 				{% if product.discount %}
 					<p class="card-text text-end">
-						{{ product.get_final_price() }} {% translate "toman" %}
+						{{ product.get_final_price }} {% translate "toman" %}
 					</p>
 				{% endif %}
 				<form action="{% url 'cart:add' product.pk %}" method="post">
