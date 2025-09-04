@@ -53,8 +53,12 @@ class SignUpLogIn(View):
         context = {'error': True}
         return render(request, 'accounts/signup_login.html', context)
 
-# Write a test to give permission only to users with a session that has 'identifier_key' and 'identifier_value'
 class SignUp(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('identifier_type') or not request.session.get('identifier_value'):
+            raise PermissionDenied("Missing identifier session keys.")
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
         identifier_value = request.session.get('identifier_value')
@@ -92,8 +96,12 @@ class SignUp(View):
         }
         return render(request, 'accounts/signup.html', context)
 
-# Write a test to give permission only to users with a session that has 'identifier_key' and 'identifier_value'
 class LogIn(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.session.get('identifier_type') or not request.session.get('identifier_value'):
+            raise PermissionDenied("Missing identifier session keys.")
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
         identifier_value = request.session.get('identifier_value')
