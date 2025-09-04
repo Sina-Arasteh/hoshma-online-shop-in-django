@@ -4,6 +4,9 @@
 {% block body %}
   <div class="container">
     <h3>{% translate 'Checkout' %}</h3>
+    {% if error %}
+      <h5 class="bg-danger">{% translate 'Please, select an address in order to proceed to payment' %}</h5>
+    {% endif %}
     {% for orderitem in order.orderitems %}
       <div class="row">
         <div class="col-3">
@@ -18,17 +21,61 @@
 				</div>
       </div>
     {% endfor %}
+
 		<div class="row">
       <p>{% translate "Total Price" %}: {{ order.total_price }}</p>
-			<div>coupon</div>
+			<!-- <div>
+        coupon
+      </div> -->
 		</div>
+
     <div class="row">
-      customer note
+      <div class="card rounded-1 mb-4 border border-black rounded">
+        <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
+          {% translate 'Address' %}
+        </div>
+        <div class="card-body p-4 bg-warning-subtle">
+          <select name="address" class="form-select" required form="payment">
+            <option selected>{% translate 'Choose Your Address' %}</option>
+            {% for address in addresses %}
+              <option value="{{ address.pk }}">{{ address }}</option>
+            {% endfor %}
+          </select>
+          {% if len(addresses) < 5 %}
+            <div>
+              <a href="{% url 'accounts:add-address' %}?next={{ request.path }}" class="btn btn-info">
+                {% translate 'Add Address' %}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
     </div>
+
+    <div class="row">
+      <div class="card rounded-1 mb-4 border border-black rounded">
+        <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
+          {% translate 'Customer Note (optional)' %}
+        </div>
+        <div class="card-body p-4 bg-warning-subtle">
+          <textarea name="customer_note" cols="50" rows="4" form="payment" placeholder="{% translate 'Is there any customer note? write down here ...' %}"></textarea>
+        </div>
+      </div>
+    </div>
+
 		<div class="row">
-      <a href="{% url 'accounts:payment' pk=order.pk %}" class="btn btn-success">{% translate 'Make a payment' %}</a>
-      <!-- cancel the order and set the order.status to 'canceled' -->
-      <!-- Ask the user to chooce the address to which the order should be sent (Set the Order.address) -->
+      <form action="{% url 'accounts:payment' pk=order.pk %}" method="post" novalidate id="payment">
+        <div class="d-grid gap-2 col-6 mx-auto mt-4">
+          <button type="submit" class="btn btn-success" {% if not addresses %}disabled{% endif %}>
+            {% translate 'Make a payment' %}
+          </button>
+        </div>
+      </form>
+      <div class="d-grid gap-2 col-6 mx-auto">
+        <a href="{% url 'accounts:order-cancellation' pk=order.pk %}" class="btn btn-danger">
+          {% translate 'Cancel the Order' %}
+        </a>
+      </div>
 		</div>
   </div>
 {% endblock %}

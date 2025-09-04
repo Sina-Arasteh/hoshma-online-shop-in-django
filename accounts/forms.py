@@ -1,13 +1,12 @@
 from django import forms
-from django.core.validators import RegexValidator, EmailValidator
 import re
+from .models import Address
+from django.core.validators import RegexValidator, EmailValidator
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from .models import Address
 
 
 User = get_user_model()
@@ -131,9 +130,10 @@ class AddAddressForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
 
-# class CustomAuthenticationForm(AuthenticationForm):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['username'].widget.attrs.update({'class': 'form-control', 'readonly': 'readonly'})
-#         self.fields['username'].widget.attrs.pop('autofocus', None)
-#         self.fields['password'].widget.attrs.update({'class': 'form-control', 'autofocus': 'autofocus'})
+class CheckoutForm(forms.Form):
+    address = forms.ModelChoiceField(queryset=Address.objects.none())
+    customer_note = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 50}))
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['address'].queryset = Address.objects.filter(user=user)

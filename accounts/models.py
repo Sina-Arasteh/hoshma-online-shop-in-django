@@ -139,7 +139,13 @@ class Order(models.Model):
         related_name="orders",
         verbose_name=_("User")
     )
-    # address = models
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.SET_NULL,
+        related_name='orders',
+        null=True,
+        blank=True
+    )
     creation = models.DateTimeField(
         _("Creation"),
         auto_now_add=True

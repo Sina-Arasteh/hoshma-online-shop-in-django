@@ -14,7 +14,8 @@ from .forms import (
     SignUpLogInForm,
     SignUpForm,
     LogInForm,
-    AddAddressForm
+    AddAddressForm,
+    CheckoutForm
 )
 from django.utils.translation import gettext as _
 from django.contrib.auth import (
@@ -23,44 +24,11 @@ from django.contrib.auth import (
     get_user_model
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.http import Http404
 
 
 User = get_user_model()
-
-
-# Test the user in order to have a non empty request.session['cart']
-# Order.address
-# User can jump from the checkout page to another page just by entering an url into the urlbar. So, we need to handle the Order.status in such a situation
-class Checkout(LoginRequiredMixin, View):
-    def get(self, request):
-        order = Order.objects.create(user=request.user)
-        cart = request.session.pop('cart', {})
-        purchases = []
-        for pk,quantity in cart.items():
-            try:
-                product = Product.objects.get(pk=pk)
-                purchase = (product, quantity)
-                purchases.append(purchase)
-            except:
-                continue
-        for purchase in purchases:
-            OrderItem.objects.create(
-                order=order,
-                product=purchase[0],
-                quantity=purchase[1]
-            )
-        order = Order.objects.get(pk=order.pk)
-        context = {'order': order}
-        return render(request, 'accounts/checkout.html', context)
-
-# login required (redirect the user to the cart page)
-# Check the status of the order (not being cancelled or ...) and being the order of the user himself/herself.
-# Order.address
-class payment(View):
-    def get(self, request, pk):
-        order = get_object_or_404(Order, pk=pk)
-        order.status = ORDER_STATUS[1][0]
-        # Riderect the user to his/her account.
 
 class SignUpLogIn(View):
     def get(self, request):
@@ -151,9 +119,73 @@ class LogIn(View):
         context = {'error': True}
         return render(request, 'accounts/login.html', context)
 
+class Checkout(LoginRequiredMixin, View):
+    def get(self, request):
+        order = Order.objects.create(user=request.user)
+        cart = request.session.pop('cart', None)
+        if not cart:
+            raise PermissionDenied(_("You must have item(s) in your cart to proceed."))
+        purchases = []
+        for pk,quantity in cart.items():
+            try:
+                product = Product.objects.get(pk=pk)
+                purchase = (product, quantity)
+                purchases.append(purchase)
+            except:
+                continue
+        for purchase in purchases:
+            OrderItem.objects.create(
+                order=order,
+                product=purchase[0],
+                quantity=purchase[1]
+            )
+        order = Order.objects.get(pk=order.pk)
+        if hasattr(request.user, 'addresses'):
+            addresses = request.user.addresses.all()
+        else:
+            addresses = []
+        context = {
+            'order': order,
+            'addresses': addresses,
+        }
+        return render(request, 'accounts/checkout.html', context)
+
+class OrderCancellation(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        order.status = ORDER_STATUS[4][0]
+        return redirect('shop:home')
+
+class payment(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        user_orders = Order.objects.filter(user=request.user)
+        order = get_object_or_404(user_orders, pk=pk)
+        if not order.status == ORDER_STATUS[0][0]:
+            raise Http404()
+        form = CheckoutForm(request.POST, user=request.user)
+        if form.is_valid():
+            selected_address = form.cleaned_data['address']
+            customer_note = form.cleaned_data['customer_note']
+            order.address = selected_address
+            order.customer_note = customer_note
+            order.status = ORDER_STATUS[1][0]
+            order.save()
+            return redirect('accounts:accounts')
+        if hasattr(request.user, 'addresses'):
+            addresses = request.user.addresses.all()
+        else:
+            addresses = []
+        context = {
+            'order': order,
+            'addresses': addresses,
+            'error': True,
+        }
+        return render(request, 'accounts/checkout.html', context)
+
 # login required
 # Users can have at most five addresses.
 # If a user have the max number of addresses disable the 'add address' button.
+# Orders that have 'pending' status should have the 'payment' button.
 class Account(View):
     def get(self, request):
         user = request.user
@@ -166,10 +198,11 @@ class Account(View):
         }
         return render(request, 'accounts/account.html', context)
 
-# login required
 # Only users that the number of their addresses is less than 5 can access this view.
-class AddAddress(View):
+class AddAddress(LoginRequiredMixin, View):
     def get(self, request):
+        next_url = request.GET.get('next')
+        request.session['next'] = next_url
         address_form = AddAddressForm()
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
@@ -180,12 +213,13 @@ class AddAddress(View):
             address_form.save(commit=False)
             address_form.user = request.user
             address_form.save()
-            return redirect
+            next_url = request.session.pop('next', None)
+            return redirect(next_url or 'accounts:account')
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
 
-# login required
-class RemoveAddress(View):
+# Only users that they've got at least an address.
+class RemoveAddress(LoginRequiredMixin, View):
     def get(self, request, pk):
         # Check if the pk exists
         pass

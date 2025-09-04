@@ -36,13 +36,15 @@
           {% endfor %}
         </div>
         <div>
-          <a href="{% url 'accounts:add-address' %}" class="link-underline-opacity-0">
+          <!-- add the .disabled to the class if the there are the max number of addresses -->
+          <a href="{% url 'accounts:add-address' %}" class="btn btn-info">
             {% translate 'Add Address' %}
           </a>
         </div>
       </div>
     </div>
 
+    <!-- Users should have the ability to accomplish the pending orders -->
     <div class="card rounded-1 mb-4 border border-black rounded">
       <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
         {% translate 'Orders' %}
