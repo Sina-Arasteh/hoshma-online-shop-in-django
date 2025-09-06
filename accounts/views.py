@@ -1,7 +1,8 @@
 from django.views import View
 from .models import (
     Order,
-    OrderItem
+    OrderItem,
+    Address
 )
 from shop.models import Product
 from django.shortcuts import (
@@ -23,7 +24,10 @@ from django.contrib.auth import (
     login,
     get_user_model
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    UserPassesTestMixin
+)
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 
@@ -33,7 +37,8 @@ User = get_user_model()
 class SignUpLogIn(View):
     def get(self, request):
         next_url = request.GET.get('next')
-        request.session['next'] = next_url
+        if next_url:
+            request.session['next'] = next_url
         return render(request, 'accounts/signup_login.html')
 
     def post(self, request):
@@ -53,11 +58,14 @@ class SignUpLogIn(View):
         context = {'error': True}
         return render(request, 'accounts/signup_login.html', context)
 
-class SignUp(View):
-    def dispatch(self, request, *args, **kwargs):
-        if not request.session.get('identifier_type') or not request.session.get('identifier_value'):
-            raise PermissionDenied("Missing identifier session keys.")
-        return super().dispatch(request, *args, **kwargs)
+class SignUp(UserPassesTestMixin, View):
+    redirect_field_name = None
+    
+    def test_func(self):
+        return all(
+            self.request.session.get('identifier_type'),
+            self.request.session.get('identifier_value')
+        )
 
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
@@ -96,11 +104,14 @@ class SignUp(View):
         }
         return render(request, 'accounts/signup.html', context)
 
-class LogIn(View):
-    def dispatch(self, request, *args, **kwargs):
-        if not request.session.get('identifier_type') or not request.session.get('identifier_value'):
-            raise PermissionDenied("Missing identifier session keys.")
-        return super().dispatch(request, *args, **kwargs)
+class LogIn(UserPassesTestMixin, View):
+    redirect_field_name = None
+    
+    def test_func(self):
+        return all(
+            self.request.session.get('identifier_type'),
+            self.request.session.get('identifier_value')
+        )
 
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
@@ -190,11 +201,7 @@ class payment(LoginRequiredMixin, View):
         }
         return render(request, 'accounts/checkout.html', context)
 
-# login required
-# Users can have at most five addresses.
-# If a user have the max number of addresses disable the 'add address' button.
-# Orders that have 'pending' status should have the 'payment' button.
-class Account(View):
+class Account(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         context = {
@@ -206,8 +213,15 @@ class Account(View):
         }
         return render(request, 'accounts/account.html', context)
 
-# Only users that the number of their addresses is less than 5 can access this view.
-class AddAddress(LoginRequiredMixin, View):
+class AddAddress(LoginRequiredMixin, UserPassesTestMixin, View):
+    raise_exception = True
+
+    def test_func(self):
+        try:
+            return len(self.request.user.addresses.all()) < 5
+        except AttributeError:
+            return True
+
     def get(self, request):
         next_url = request.GET.get('next')
         request.session['next'] = next_url
@@ -226,8 +240,17 @@ class AddAddress(LoginRequiredMixin, View):
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
 
-# Only users that they've got at least an address.
-class RemoveAddress(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        # Check if the pk exists
-        pass
+class RemoveAddress(LoginRequiredMixin, UserPassesTestMixin, View):
+    raise_exception = True
+
+    def test_func(self):
+        try:
+            return len(self.request.user.addresses.all())
+        except AttributeError:
+            return True
+
+    def post(self, request, pk):
+        user_addresses = Address.objects.filter(user=request.user)
+        address = get_object_or_404(user_addresses, pk=pk)
+        address.delete()
+        return redirect('accounts:account')

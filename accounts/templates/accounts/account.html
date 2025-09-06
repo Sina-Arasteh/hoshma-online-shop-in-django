@@ -30,21 +30,19 @@
               <p>{{ address }}</p>
               <form action="{% url 'accounts:remove-address' pk=address.pk %}" method="post" novalidate>
                 {% csrf_token %}
-                <button type="submit">{% translate 'Remove Address' %}</button>
+                <button type="submit" class="btn btn-info">{% translate 'Remove Address' %}</button>
               </form>
             </div>
           {% endfor %}
         </div>
         <div>
-          <!-- add the .disabled to the class if the there are the max number of addresses -->
-          <a href="{% url 'accounts:add-address' %}" class="btn btn-info">
+          <a {% if len(addresses) < 5 %}href="{% url 'accounts:add-address' %}" class="btn btn-info"{% else %}class="btn btn-info disabled"{% endif %}>
             {% translate 'Add Address' %}
           </a>
         </div>
       </div>
     </div>
 
-    <!-- Users should have the ability to accomplish the pending orders -->
     <div class="card rounded-1 mb-4 border border-black rounded">
       <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
         {% translate 'Orders' %}
@@ -64,9 +62,34 @@
             </ol>
             <p>{% translate 'Total Price' %}: {{ order.total_price }} {% translate "toman" %}</p>
             <!-- {% if coupon %}<p>{% translate 'Coupon' %}: </p>{% endif %} -->
-            <p>{% translate 'Amount Paid' %}: {% translate "toman" %}</p>
-            <p>{% translate 'Address' %}: {{ order.address }}</p>
-            <p>{% translate 'Customer Note' %}: {{ order.customer_note }}</p>
+            <!-- <p>{% translate 'Amount Paid' %}: {% translate "toman" %}</p> -->
+            {% if not order.status == ORDER_STATUS[0][0] and not order.status == ORDER_STATUS[4][0] %}
+              <p>{% translate 'Address' %}: {{ order.address }}</p>
+              <p>{% translate 'Customer Note' %}: {{ order.customer_note }}</p>
+            {% endif %}
+            {% if order.status == ORDER_STATUS[0][0] %}
+              <div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#payment" aria-expanded="false" aria-controls="payment">
+                  {% translate 'Make a payment' %}
+                </button>
+              </div>
+              <div class="collapse" id="payment">
+                <div class="card card-body">
+                  <form action="{% url 'accounts:payment' pk=order.pk %}" method="post" novalidate>
+                    <select name="address" class="form-select" required>
+                      <option selected>{% translate 'Choose Your Address' %}</option>
+                      {% for address in addresses %}
+                        <option value="{{ address.pk }}">{{ address }}</option>
+                      {% endfor %}
+                    </select>
+                    <br>
+                    <textarea name="customer_note" cols="50" rows="4" placeholder="{% translate 'Do you have any note? write down here ...' %}"></textarea>
+                    <br>
+                    <button type="submit" class="btn btn-success">{% translate 'Continue' %}</button>
+                  </form>
+                </div>
+              </div>
+            {% endif %}
           </div>
         {% endfor %}
       </div>

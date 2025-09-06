@@ -132,7 +132,10 @@ class AddAddressForm(forms.ModelForm):
 
 class CheckoutForm(forms.Form):
     address = forms.ModelChoiceField(queryset=Address.objects.none())
-    customer_note = forms.CharField(widget=forms.Textarea(attrs={'rows': 4, 'cols': 50}))
+    customer_note = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 4, 'cols': 50})
+    )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
