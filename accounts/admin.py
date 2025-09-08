@@ -4,7 +4,6 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from . import models
 from shop import models as shop_models
-from cart import models as cart_models
 
 
 admin.site.register(models.CustomUser)

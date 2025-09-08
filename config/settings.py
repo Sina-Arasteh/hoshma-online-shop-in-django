@@ -56,6 +56,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'config.context_processors.category',
             ],
         },
     },
@@ -100,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
     {
-        'NAME': 'accounts.password_validators.MaximumLengthValidator',
+        'NAME': 'config.password_validators.MaximumLengthValidator',
         'OPTIONS': {
             "max_length": 128,
         },

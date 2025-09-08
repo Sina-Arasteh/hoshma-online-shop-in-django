@@ -11,6 +11,9 @@ urlpatterns = [
     path('checkout/cancellation/<int:pk>/', views.OrderCancellation.as_view(), name="order-cancellation"),
     path('address/addition/', views.AddAddress.as_view(), name='add-address'),
     path('address/removal/<int:pk>/', views.RemoveAddress.as_view(), name='remove-address'),
-    path('payment/<int:pk>/', views, name='payment'),
+    path('payment/<int:pk>/', views.Payment.as_view(), name='payment'),
     path('account/', views.Account.as_view(), name='account'),
+    path('account/deletion/', views.AccountDeletion.as_view(), name='account-deletion'),
+    path('account/password/change', views.PasswordChange.as_view(), name='password-change'),
+    path('account/logout/', views, name='logout'),
 ]

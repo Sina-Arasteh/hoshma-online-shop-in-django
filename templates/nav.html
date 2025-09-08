@@ -2,13 +2,13 @@
 
 <ul class="nav nav-justified bg-primary bg-gradient">
   <li class="nav-item">
-    <a class="nav-link text-white" href="{% url 'shop:home' %}">
-      {% translate "Home" %}
+    <a class="nav-link text-white" data-bs-toggle="collapse" href="#category" role="button" aria-expanded="false" aria-controls="category">
+      {% translate "categories" %}
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link text-white" href="">
-      {% translate "categories" %}
+    <a class="nav-link text-white" href="{% url 'shop:home' %}">
+      {% translate "Home" %}
     </a>
   </li>
   {% if request.user.is_authenticated %}
@@ -30,3 +30,10 @@
     </a>
   </li>
 </ul>
+
+<!-- class: position-absolute, z-1 -->
+<div class="collapse" id="category" style="position: absolute; z-index: 1;">
+  <div class="card card-body bg-danger-subtle">
+    {% include "category_tree.html" with categories=root_categories %}
+  </div>
+</div>

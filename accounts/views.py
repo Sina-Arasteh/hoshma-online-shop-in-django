@@ -16,12 +16,14 @@ from .forms import (
     SignUpForm,
     LogInForm,
     AddAddressForm,
-    CheckoutForm
+    CheckoutForm,
+    ChangePasswordForm
 )
 from django.utils.translation import gettext as _
 from django.contrib.auth import (
     authenticate,
     login,
+    logout,
     get_user_model
 )
 from django.contrib.auth.mixins import (
@@ -34,7 +36,12 @@ from django.http import Http404
 
 User = get_user_model()
 
-class SignUpLogIn(View):
+class SignUpLogIn(UserPassesTestMixin, View):
+    raise_exception = True
+
+    def test_func(self):
+        return self.request.user.is_anonymous
+
     def get(self, request):
         next_url = request.GET.get('next')
         if next_url:
@@ -46,12 +53,17 @@ class SignUpLogIn(View):
         if form.is_valid():
             identifier_type = form.cleaned_data["identifier_type"]
             identifier_value = form.cleaned_data["identifier_value"]
-            request.session['identifier_type'] = identifier_type
-            request.session['identifier_value'] = identifier_value
             if identifier_type == 'email':
                 login = User.objects.filter(email__iexact=form.cleaned_data["identifier_value"]).exists()
+                is_active = User.objects.filter(email__iexact=form.cleaned_data["identifier_value"], is_active=True).exists()
             else:
                 login = User.objects.filter(phone=form.cleaned_data["identifier_value"]).exists()
+                is_active = User.objects.filter(phone=form.cleaned_data["identifier_value"], is_active=True).exists()
+            if not is_active:
+                context = {'error': True}
+                return render(request, 'accounts/signup_login.html', context)
+            request.session['identifier_type'] = identifier_type
+            request.session['identifier_value'] = identifier_value
             if login:
                 return redirect('accounts:login')
             return redirect('accounts:signup')
@@ -62,10 +74,10 @@ class SignUp(UserPassesTestMixin, View):
     redirect_field_name = None
     
     def test_func(self):
-        return all(
+        return all([
             self.request.session.get('identifier_type'),
             self.request.session.get('identifier_value')
-        )
+        ])
 
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
@@ -108,10 +120,10 @@ class LogIn(UserPassesTestMixin, View):
     redirect_field_name = None
     
     def test_func(self):
-        return all(
+        return all([
             self.request.session.get('identifier_type'),
             self.request.session.get('identifier_value')
-        )
+        ])
 
     def get(self, request):
         identifier_type = request.session.get('identifier_type')
@@ -175,7 +187,7 @@ class OrderCancellation(LoginRequiredMixin, View):
         order.status = ORDER_STATUS[4][0]
         return redirect('shop:home')
 
-class payment(LoginRequiredMixin, View):
+class Payment(LoginRequiredMixin, View):
     def post(self, request, pk):
         user_orders = Order.objects.filter(user=request.user)
         order = get_object_or_404(user_orders, pk=pk)
@@ -209,7 +221,9 @@ class Account(LoginRequiredMixin, View):
             'phone': user.phone,
             'email': user.email,
             'addresses': user.addresses.all(),
-            'orders': user.orders
+            'orders': user.orders,
+            'ORDER_STATUS_PENDING': ORDER_STATUS[0][0],
+            'ORDER_STATUS_CANCELLED': ORDER_STATUS[4][0],
         }
         return render(request, 'accounts/account.html', context)
 
@@ -223,8 +237,6 @@ class AddAddress(LoginRequiredMixin, UserPassesTestMixin, View):
             return True
 
     def get(self, request):
-        next_url = request.GET.get('next')
-        request.session['next'] = next_url
         address_form = AddAddressForm()
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
@@ -235,8 +247,7 @@ class AddAddress(LoginRequiredMixin, UserPassesTestMixin, View):
             address_form.save(commit=False)
             address_form.user = request.user
             address_form.save()
-            next_url = request.session.pop('next', None)
-            return redirect(next_url or 'accounts:account')
+            return redirect('shop:home')
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
 
@@ -254,3 +265,31 @@ class RemoveAddress(LoginRequiredMixin, UserPassesTestMixin, View):
         address = get_object_or_404(user_addresses, pk=pk)
         address.delete()
         return redirect('accounts:account')
+
+class AccountDeletion(LoginRequiredMixin, View):
+    def post(self, request):
+        user = request.user
+        logout(request)
+        user.is_active = False
+        return redirect('shop:home')
+
+class PasswordChange(LoginRequiredMixin, View):
+    def get(self, request):
+        form = ChangePasswordForm()
+        context = {'form': form}
+        return render(request, 'accounts/change_password.html', context)
+
+    def post(self, request):
+        form = ChangePasswordForm(request.POST, user=request.user)
+        if form.is_valid():
+            user = request.user
+            new_password = form.cleaned_data['new_password']
+            user.set_password(new_password)
+            return redirect('shop:home')
+        context = {'form': form}
+        return render(request, 'accounts/change_password.html', context)
+
+class LogOut(LoginRequiredMixin, View):
+    def get(self, request):
+        logout(request)
+        return redirect('shop:home')

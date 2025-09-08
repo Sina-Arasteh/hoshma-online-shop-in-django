@@ -5,7 +5,7 @@ from .models import CustomUser
 class PhoneEmailBackend(BaseBackend):
     def authenticate(self, request, identifier=None, password=None):
         user = CustomUser.objects.get_by_natural_key(identifier)
-        if user is not None and user.check_password(password) and user.is_active:
+        if user is not None and user.check_password(password):
             return user
         return None
     

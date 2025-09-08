@@ -43,7 +43,7 @@
           </select>
           {% if len(addresses) < 5 %}
             <div>
-              <a href="{% url 'accounts:add-address' %}?next={{ request.path }}" class="btn btn-info">
+              <a href="{% url 'accounts:add-address' %}" class="btn btn-info" target="_blank">
                 {% translate 'Add Address' %}
               </a>
             </div>

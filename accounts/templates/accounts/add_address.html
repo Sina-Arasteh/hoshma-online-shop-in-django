@@ -2,14 +2,17 @@
 {% load i18n %}
 
 {% block body %}
-  <h3>{% translate 'Add Address' %}</h3>
-  <form action="{% url 'accounts:add-address' %}" method="post" novalidate>
-    {% csrf_token %}
-    {% for field in form %}
-      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}:</label><br>
-      {{ field }}
-      {{ field.errors }}
-    {% endfor %}
-    <button type="submit">{% translate 'Add Address' %}</button>
-  </form>
+  <div class="container mt-4">
+    <h3>{% translate 'Add Address' %}</h3>
+    <form action="{% url 'accounts:add-address' %}" method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}:</label><br>
+        {{ field }}
+        {{ field.errors }}
+      {% endfor %}
+      <button type="submit">{% translate 'Add Address' %}</button>
+    </form>
+    <a href="{% url 'shop:home' %}" class="btn btn-primary">Cancel</a>
+  </div>
 {% endblock %}

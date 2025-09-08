@@ -178,6 +178,7 @@ class OrderItem(models.Model):
         on_delete=models.SET_NULL,
         related_name='orderitems',
         null=True,
+        blank=True,
         verbose_name=_("Product")
     )
     price = models.PositiveIntegerField(_("Price"))
@@ -185,7 +186,8 @@ class OrderItem(models.Model):
         shop_models.Discount,
         on_delete=models.SET_NULL,
         verbose_name=_("Discount"),
-        null=True
+        null=True,
+        blank=True
     )
     quantity = models.PositiveIntegerField(_("Quantity"))
 

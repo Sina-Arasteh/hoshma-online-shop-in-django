@@ -3,7 +3,7 @@
 
 {% block body %}
   <div class="container mt-4">
-    <h3>{% translate 'Account' %}</h3>
+    <h3 class="mb-4">{% translate 'Account' %}</h3>
     <div class="card rounded-1 mb-4 border border-black rounded">
       <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
         {% translate 'Personal Information' %}
@@ -36,7 +36,7 @@
           {% endfor %}
         </div>
         <div>
-          <a {% if len(addresses) < 5 %}href="{% url 'accounts:add-address' %}" class="btn btn-info"{% else %}class="btn btn-info disabled"{% endif %}>
+          <a {% if addresses|length < 5 %}href="{% url 'accounts:add-address' %}" class="btn btn-info"{% else %}class="btn btn-info disabled"{% endif %} target="_blank">
             {% translate 'Add Address' %}
           </a>
         </div>
@@ -63,11 +63,11 @@
             <p>{% translate 'Total Price' %}: {{ order.total_price }} {% translate "toman" %}</p>
             <!-- {% if coupon %}<p>{% translate 'Coupon' %}: </p>{% endif %} -->
             <!-- <p>{% translate 'Amount Paid' %}: {% translate "toman" %}</p> -->
-            {% if not order.status == ORDER_STATUS[0][0] and not order.status == ORDER_STATUS[4][0] %}
+            {% if not order.status == ORDER_STATUS_PENDING and not order.status == ORDER_STATUS_CANCELLED %}
               <p>{% translate 'Address' %}: {{ order.address }}</p>
               <p>{% translate 'Customer Note' %}: {{ order.customer_note }}</p>
             {% endif %}
-            {% if order.status == ORDER_STATUS[0][0] %}
+            {% if order.status == ORDER_STATUS_PENDING %}
               <div>
                 <button type="button" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#payment" aria-expanded="false" aria-controls="payment">
                   {% translate 'Make a payment' %}
@@ -94,5 +94,28 @@
         {% endfor %}
       </div>
     </div>
-  </div>
+
+    <div class="card rounded-1 mb-4 border border-black rounded">
+      <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
+        {% translate 'Account Settings' %}
+      </div>
+      <div class="card-body p-4 bg-warning-subtle">
+        <div>
+          <form action="{% url 'accounts:account-deletion' %}" method="post" novalidate>
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">{% translate 'Delete the Account' %}</button>
+          </form>
+        </div>
+        <div>
+          <a href="{% url 'password-change' %}" class="btn btn-primary" target="_blank">
+            {% translate 'Change Password' %}
+          </a>
+        </div>
+        <div>
+          <a href="{% url 'accounts:logout' %}" class="btn btn-primary">
+            {% translate 'Logout' %}
+          </a>
+        </div>
+      </div>
+    </div>
 {% endblock %}

@@ -26,6 +26,7 @@ class Category(models.Model):
         'self',
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         related_name='children'
     )
     hierarchy = models.PositiveIntegerField(editable=False, default=0)  # The hierarchy of a root category equals 0.
@@ -62,7 +63,7 @@ class Category(models.Model):
         parent = self.parent
         parents = list()
         while parent:
-            parents.append(parent.id)
+            parents.append(parent)
             parent = parent.parent
         parents.reverse()
         return parents
@@ -78,19 +79,15 @@ class Category(models.Model):
         return children
     
     def get_all_children_products(self):
-        children = self.get_children()
+        children = Category.objects.filter(id__in=[c.id for c in self.get_children()]).prefetch_related('products')
         products = set()
         for child in children:
             products.update(product.id for product in child.products.all())
         return sorted(list(products))
 
     def __str__(self):
-        all_parents = self.get_parents_hierarchy()
-        parents = list()
-        for parent in all_parents:
-            parents.append(parent.name)
-        parents = "/".join(parents)
-        return f"{parents}/{self.name}" if parents else f"{self.name}"
+        parents = "/".join([p.name for p in self.get_parents_hierarchy()])
+        return f"{parents} / {self.name}" if parents else self.name
 
 class Discount(models.Model):
     type = models.CharField(
@@ -131,8 +128,8 @@ class Discount(models.Model):
     def __str__(self):
         return f"{self.type}: {self.amount}"
 
-class Coupon(models.Model):
-    pass
+# class Coupon(models.Model):
+#     pass
 
 class Tag(models.Model):
     name = models.CharField(

@@ -13,12 +13,9 @@ User = get_user_model()
 
 def get_max_password_length(default=128):
     for validator in settings.AUTH_PASSWORD_VALIDATORS:
-        if validator['NAME'] == 'accounts.passsword_validators.MaximumLengthValidator':
+        if validator['NAME'] == 'config.passsword_validators.MaximumLengthValidator':
             return validator.get('OPTIONS', {}).get('max_length', default)
     return default
-
-class CheckoutForm(forms.Form):
-    pass
 
 class SignUpLogInForm(forms.Form):
     identifier_value = forms.CharField(max_length=254)
@@ -140,3 +137,47 @@ class CheckoutForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['address'].queryset = Address.objects.filter(user=user)
+
+class ChangePasswordForm(forms.Form):
+    old_password = forms.CharField(
+        label=_("Old Password"),
+        max_length=get_max_password_length(),
+        widget=forms.PasswordInput
+    )
+    new_password = forms.CharField(
+        label=_("New Password"),
+        max_length=get_max_password_length(),
+        widget=forms.PasswordInput
+    )
+    new_password_confirmation = forms.CharField(
+        label=_("New Password Confirmation"),
+        max_length=get_max_password_length(),
+        widget=forms.PasswordInput
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+    
+    def clean_old_password(self):
+        old_password = self.cleaned_data['old_password']
+        if not self.user.check_password(old_password):
+            raise ValidationError(_("Your old password is incorrect."))
+        return old_password
+
+    def clean_new_password(self):
+        pass
+        """Validates the password through the password validators"""
+        new_password = self.cleaned_data.get('new_password')
+        validate_password(new_password, user=self.user)
+        return new_password
+
+    def clean_new_password_confirmation(self):
+        """Checks the similarity of the password_confirmation field to the password field"""
+        new_password_confirmation = self.cleaned_data.get('new_password_confirmation')
+        new_password = self.cleaned_data.get('new_password')
+        if new_password_confirmation != new_password:
+            raise ValidationError(_("Password confirmation is not correct."))
+        return new_password_confirmation
