@@ -2,15 +2,15 @@
 {% load i18n %}
 
 {% block body %}
-  <div class="container mt-3 p-4 border border-black rounded">
-    <h3>{% translate 'LogIn' %}</h3>
-    <h5>{% translate 'Welcome' %} {{ user.get_short_name }}</h5>
+  <div class="container my-5 p-4 border border-black rounded">
+    <h3 class="mb-3">{% translate 'LogIn' %}</h3>
+    <h5 class="mb-3">{% translate 'Welcome' %} <span class="text-warning-emphasis">{{ user.get_short_name }}</span></h5>
     <p>{% translate 'Please enter your password' %}</p>
     <form action="{% url 'accounts:login' %}" method="post" novalidate>
       {% csrf_token %}
       <input type="password" name="password" class="form-control" autofocus>
       {% if error %}
-        <p class="small text-danger">
+        <p class="small text-danger mt-2">
           {% translate "The password is not correct." %}
         </p>
       {% endif %}

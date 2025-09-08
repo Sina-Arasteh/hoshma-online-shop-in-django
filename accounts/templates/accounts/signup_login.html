@@ -2,15 +2,15 @@
 {% load i18n %}
 
 {% block body %}
-  <div class="container mt-5 p-4 border border-black rounded bg-success-subtle">
-    <h3>{% translate 'SignUp | LogIn' %}</h3>
-    <p>{% translate 'Hello!' %}</p>
+  <div class="container my-5 p-4 border border-black rounded bg-success-subtle">
+    <h3 class="mb-3">{% translate 'SignUp | LogIn' %}</h3>
+    <h5 class="mb-3">{% translate 'Hello!' %}</h5>
     <p>{% translate 'Please enter your phone or email' %}</p>
     <form action="{% url 'accounts:signup-login' %}" method="post" novalidate>
       {% csrf_token %}
       <input type="text" name="identifier_value" class="form-control" autofocus>
       {% if error %}
-        <p class="small text-danger">
+        <p class="small text-danger mt-2">
           {% translate "The phone number or the email address is invalid." %}
         </p>
       {% endif %}

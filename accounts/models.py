@@ -130,7 +130,7 @@ class Address(models.Model):
         verbose_name_plural = _("Addresses")
     
     def __str__(self):
-        return f"{self.province}/{self.city}/{self.street}/{self.alley}/{self.number}"
+        return f"{self.province} / {self.city} / {self.street} / {self.alley} / {self.number}"
 
 class Order(models.Model):
     user = models.ForeignKey(

@@ -152,6 +152,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 AUTHENTICATION_BACKENDS = [
     'accounts.auth_backends.PhoneEmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 LOGIN_URL = "accounts:signup-login"

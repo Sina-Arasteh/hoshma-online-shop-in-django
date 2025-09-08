@@ -27,18 +27,23 @@
         <div>
           {% for address in addresses %}
             <div class="mb-3">
-              <p>{{ address }}</p>
-              <form action="{% url 'accounts:remove-address' pk=address.pk %}" method="post" novalidate>
+              <form action="{% url 'accounts:remove-address' pk=address.pk %}" method="post" id="address-remove" novalidate>
                 {% csrf_token %}
-                <button type="submit" class="btn btn-info">{% translate 'Remove Address' %}</button>
               </form>
+              <p>
+                {% translate 'Province' %}: {{ address.province }} / {% translate 'City' %}: {{ address.city }} / {% translate 'Street' %}: {{ address.street }} / {% translate 'Alley' %}: {{ address.alley }} / {% translate 'Number' %}: {{ address.number }} / {% translate 'Zip Code' %}: {{ address.zip_code }}
+                <button type="submit" class="btn btn-warning" form="address-remove">{% translate 'Remove Address' %}</button>
+              </p>
             </div>
+            <hr>
           {% endfor %}
         </div>
         <div>
-          <a {% if addresses|length < 5 %}href="{% url 'accounts:add-address' %}" class="btn btn-info"{% else %}class="btn btn-info disabled"{% endif %} target="_blank">
-            {% translate 'Add Address' %}
-          </a>
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <a {% if addresses|length < 5 %}href="{% url 'accounts:add-address' %}" class="btn btn-info"{% else %}class="btn btn-info disabled"{% endif %} target="_blank">
+              {% translate 'Add Address' %}
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -95,27 +100,16 @@
       </div>
     </div>
 
-    <div class="card rounded-1 mb-4 border border-black rounded">
-      <div class="card-header fw-medium bg-danger-subtle border-bottom border-black">
-        {% translate 'Account Settings' %}
-      </div>
-      <div class="card-body p-4 bg-warning-subtle">
-        <div>
-          <form action="{% url 'accounts:account-deletion' %}" method="post" novalidate>
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">{% translate 'Delete the Account' %}</button>
-          </form>
-        </div>
-        <div>
-          <a href="{% url 'password-change' %}" class="btn btn-primary" target="_blank">
-            {% translate 'Change Password' %}
-          </a>
-        </div>
-        <div>
-          <a href="{% url 'accounts:logout' %}" class="btn btn-primary">
-            {% translate 'Logout' %}
-          </a>
-        </div>
-      </div>
+    <div class="card-body p-4 mb-4 border border-black rounded">
+      <a href="{% url 'accounts:password-change' %}" class="btn btn-primary" target="_blank">
+        {% translate 'Change Password' %}
+      </a>
+      <a href="{% url 'accounts:logout' %}" class="btn btn-primary">
+        {% translate 'Logout' %}
+      </a>
+      <button type="submit" class="btn btn-danger" form="delete-account">{% translate 'Delete the Account' %}</button>
+      <form action="{% url 'accounts:account-deletion' %}" method="post" id="delete-account" novalidate>
+        {% csrf_token %}
+      </form>
     </div>
 {% endblock %}

@@ -6,6 +6,7 @@
       {% translate "categories" %}
     </a>
   </li>
+  <div class="vr text-white"></div>
   <li class="nav-item">
     <a class="nav-link text-white" href="{% url 'shop:home' %}">
       {% translate "Home" %}
@@ -31,8 +32,7 @@
   </li>
 </ul>
 
-<!-- class: position-absolute, z-1 -->
-<div class="collapse" id="category" style="position: absolute; z-index: 1;">
+<div class="collapse position-absolute z-1" id="category">
   <div class="card card-body bg-danger-subtle">
     {% include "category_tree.html" with categories=root_categories %}
   </div>

@@ -244,10 +244,10 @@ class AddAddress(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request):
         address_form = AddAddressForm(request.POST)
         if address_form.is_valid():
-            address_form.save(commit=False)
-            address_form.user = request.user
-            address_form.save()
-            return redirect('shop:home')
+            address = address_form.save(commit=False)
+            address.user = request.user
+            address.save()
+            return redirect('accounts:account')
         context = {'form': address_form}
         return render(request, 'accounts/add_address.html', context)
 
@@ -285,7 +285,8 @@ class PasswordChange(LoginRequiredMixin, View):
             user = request.user
             new_password = form.cleaned_data['new_password']
             user.set_password(new_password)
-            return redirect('shop:home')
+            user.save()
+            return redirect('accounts:account')
         context = {'form': form}
         return render(request, 'accounts/change_password.html', context)
 

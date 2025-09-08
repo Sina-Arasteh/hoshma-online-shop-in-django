@@ -168,7 +168,6 @@ class ChangePasswordForm(forms.Form):
         return old_password
 
     def clean_new_password(self):
-        pass
         """Validates the password through the password validators"""
         new_password = self.cleaned_data.get('new_password')
         validate_password(new_password, user=self.user)
