@@ -53,20 +53,19 @@ class SignUpLogIn(UserPassesTestMixin, View):
         if form.is_valid():
             identifier_type = form.cleaned_data["identifier_type"]
             identifier_value = form.cleaned_data["identifier_value"]
-            if identifier_type == 'email':
-                login = User.objects.filter(email__iexact=form.cleaned_data["identifier_value"]).exists()
-                is_active = User.objects.filter(email__iexact=form.cleaned_data["identifier_value"], is_active=True).exists()
-            else:
-                login = User.objects.filter(phone=form.cleaned_data["identifier_value"]).exists()
-                is_active = User.objects.filter(phone=form.cleaned_data["identifier_value"], is_active=True).exists()
-            if not is_active:
-                context = {'error': True}
-                return render(request, 'accounts/signup_login.html', context)
-            request.session['identifier_type'] = identifier_type
-            request.session['identifier_value'] = identifier_value
-            if login:
+            try:
+                login = User.objects.get(email__iexact=form.cleaned_data["identifier_value"])
+            except:
+                try:
+                    login = User.objects.get(phone=form.cleaned_data["identifier_value"])
+                except:
+                    request.session['identifier_type'] = identifier_type
+                    request.session['identifier_value'] = identifier_value
+                    return redirect('accounts:signup')
+            if login.is_active:
+                request.session['identifier_type'] = identifier_type
+                request.session['identifier_value'] = identifier_value
                 return redirect('accounts:login')
-            return redirect('accounts:signup')
         context = {'error': True}
         return render(request, 'accounts/signup_login.html', context)
 
@@ -104,6 +103,11 @@ class SignUp(UserPassesTestMixin, View):
                 user.phone = identifier_value
             user.set_password(signup_form.cleaned_data.get('password'))
             user.save()
+            user = authenticate(
+                request,
+                identifier=identifier_value,
+                password=signup_form.cleaned_data.get('password')
+            )
             login(request, user)
             del request.session['identifier_type']
             del request.session['identifier_value']
@@ -271,6 +275,7 @@ class AccountDeletion(LoginRequiredMixin, View):
         user = request.user
         logout(request)
         user.is_active = False
+        user.save()
         return redirect('shop:home')
 
 class PasswordChange(LoginRequiredMixin, View):

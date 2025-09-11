@@ -4,7 +4,6 @@ from .constants import DISCOUNT_CHOICES
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator
 from django.urls import reverse
 from django.utils import timezone
 
@@ -27,9 +26,14 @@ class Category(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+        verbose_name=_("Parent"),
         related_name='children'
     )
-    hierarchy = models.PositiveIntegerField(editable=False, default=0)  # The hierarchy of a root category equals 0.
+    hierarchy = models.PositiveIntegerField(
+        _("Hierarchy"),
+        editable=False,
+        default=0
+    )  # The hierarchy of a root category equals 0.
 
     class Meta:
         verbose_name = _("Category")
@@ -77,12 +81,12 @@ class Category(models.Model):
                 collect_children(child)
         collect_children(self)
         return children
-    
+
     def get_all_children_products(self):
         children = Category.objects.filter(id__in=[c.id for c in self.get_children()]).prefetch_related('products')
         products = set()
         for child in children:
-            products.update(product.id for product in child.products.all())
+            products.update(product for product in child.products.all())
         return sorted(list(products))
 
     def __str__(self):
@@ -158,9 +162,7 @@ class Product(models.Model):
         related_name="products",
         verbose_name=_("Category")
     )
-    price = models.PositiveIntegerField(
-        _("Price")
-    )
+    price = models.PositiveIntegerField(_("Price"))
     discount = models.ForeignKey(
         Discount,
         on_delete=models.SET_NULL,
@@ -169,7 +171,11 @@ class Product(models.Model):
         verbose_name=_("Discount"),
         related_name='products'
     )
-    tags = models.ManyToManyField(Tag, related_name="products")
+    tags = models.ManyToManyField(
+        Tag,
+        related_name="products",
+        verbose_name=_("Tags")
+    )
     description_brief = models.TextField(_("Brief Description"))
     description = models.TextField(_("Description"))
     stock = models.PositiveIntegerField(
@@ -216,13 +222,17 @@ class MainImage(models.Model):
         Product,
         on_delete=models.CASCADE,
         related_name='main_image',
-        primary_key=True
+        primary_key=True,
+        verbose_name=_("Product")
     )
     image = models.ImageField(
         _("Main Image"),
         upload_to=product_main_image_upload_to
     )
-    alt = models.CharField(max_length=100)
+    alt = models.CharField(
+        _("Alt"),
+        max_length=100
+    )
 
     class Meta:
         verbose_name = _("Main Image")
@@ -237,14 +247,15 @@ class Image(models.Model):
         upload_to=product_images_upload_to
     )
     alt = models.CharField(
+        _("Alt"),
         max_length=100,
-        null=True,
         blank=True
     )
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
-        related_name='images'
+        related_name='images',
+        verbose_name=_("Product")
     )
 
     class Meta:

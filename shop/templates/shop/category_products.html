@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block body %}
+  <div class="card-group container p-3">
+    <div class="row g-2">
+      {% for product in products %}
+        <div class="col-4">
+          <div class="card h-100 rounded-0">
+            <img src="{{ product.main_image.image.url }}" class="card-img-top" alt="{{ product.main_image.alt }}" height="240px" width="240px">
+            <div class="card-body">
+              <h5 class="card-title lh-base">{{ product.title }}</h5><br>
+              <p class="card-text text-end {% if product.discount %}text-decoration-line-through small{% endif %}">
+                {{ product.price }} {% translate "toman" %}
+              </p>
+              {% if product.discount %}
+                <p class="card-text text-end">
+                  {{ product.get_final_price }} {% translate "toman" %}
+                </p>
+              {% endif %}
+            </div>
+            <a href="{{ product.get_absolute_url }}" class="stretched-link" target="_blank"></a>
+          </div>
+        </div>
+      {% endfor %}
+			{% if not products %}
+			  <h3 class="bg-danger">{% translate 'There is no products' %}</h3>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

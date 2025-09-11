@@ -8,9 +8,6 @@
     <div>
       {{ form.non_field_errors }}
     </div>
-    <div>
-      test: {{ test }}
-    </div>
     <form action="{% url 'accounts:signup' %}" method="post" novalidate>
       {% csrf_token %}
       {% for field in form %}

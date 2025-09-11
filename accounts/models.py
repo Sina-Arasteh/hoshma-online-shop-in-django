@@ -144,7 +144,8 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         related_name='orders',
         null=True,
-        blank=True
+        blank=True,
+        verbose_name=_("Address")
     )
     creation = models.DateTimeField(
         _("Creation"),
@@ -156,7 +157,13 @@ class Order(models.Model):
         verbose_name=_("Status"),
         default='pending'
     )
-    customer_note = models.TextField(blank=True)
+    customer_note = models.TextField(
+        _("Customer Note"),
+        blank=True
+    )
+
+    def __str__(self):
+        return self.pk
 
     class Meta:
         ordering = ["-creation"]
@@ -175,11 +182,9 @@ class OrderItem(models.Model):
     )
     product = models.ForeignKey(
         shop_models.Product,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='orderitems',
-        null=True,
-        blank=True,
-        verbose_name=_("Product")
+        verbose_name=_("Product"),
     )
     price = models.PositiveIntegerField(_("Price"))
     discount = models.ForeignKey(

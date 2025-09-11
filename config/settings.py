@@ -70,8 +70,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("MYSQL_DATABASE"),
+        'USER': os.getenv("MYSQL_USER"),
+        'PASSWORD': os.getenv("MYSQL_PASSWORD"),
+        'HOST': 'db',
+        'PORT': '3306',
     }
 }
 
@@ -151,7 +155,7 @@ MEDIA_ROOT = BASE_DIR / "images"
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 AUTHENTICATION_BACKENDS = [
-    'accounts.auth_backends.PhoneEmailBackend',
+    'config.auth_backends.PhoneEmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 

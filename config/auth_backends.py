@@ -1,5 +1,5 @@
 from django.contrib.auth.backends import BaseBackend
-from .models import CustomUser
+from accounts.models import CustomUser
 
 
 class PhoneEmailBackend(BaseBackend):
