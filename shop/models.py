@@ -29,26 +29,12 @@ class Category(models.Model):
         verbose_name=_("Parent"),
         related_name='children'
     )
-    hierarchy = models.PositiveIntegerField(
-        _("Hierarchy"),
-        editable=False,
-        default=0
-    )  # The hierarchy of a root category equals 0.
 
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
-        indexes = [
-            models.Index(fields=['hierarchy',]),
-        ]
 
     def save(self, *args, **kwargs):
-        count = 0
-        parent = self.parent
-        while parent:
-            count += 1
-            parent = parent.parent
-        self.hierarchy = count
         self.full_clean()
         super().save(*args, **kwargs)
 
