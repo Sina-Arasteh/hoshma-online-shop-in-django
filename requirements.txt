@@ -2,3 +2,5 @@ Django
 djangorestframework
 Pillow
 mysqlclient
+redis
+django-redis

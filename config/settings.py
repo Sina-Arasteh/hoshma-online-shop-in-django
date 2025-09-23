@@ -161,9 +161,9 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_URL = "accounts:signup-login"
 
-LOGIN_REDIRECT_URL = "shop:home"
+LOGIN_REDIRECT_URL = "shop:products"
 
-LOGOUT_REDIRECT_URL = "shop:home"
+LOGOUT_REDIRECT_URL = "shop:products"
 
 
 # Localization
@@ -171,3 +171,16 @@ LOGOUT_REDIRECT_URL = "shop:home"
 LOCALE_PATHS = [
     BASE_DIR / "locale",
 ]
+
+
+# Cache
+
+CACHES = {
+    'default': {
+        'BACKEND': "django_redis.cache.RedisCache",
+        'LOCATION': "redis://redis:6379/1",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

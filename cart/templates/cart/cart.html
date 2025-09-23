@@ -10,7 +10,7 @@
     {% for purchase in purchases %}
       <div class="row mb-3 border border-black rounded">
         <div class="col-3">
-          <img src="{{ purchase.0.main_images.url }}" alt="{{ purchase.0.main_images.alt }}" width="72px" height="72px">
+          <img src="{{ purchase.0.main_image.url }}" alt="{{ purchase.0.main_image.alt }}" width="72px" height="72px">
         </div>
         <div class="col-6">
           <h3>{{ purchase.0.title }}</h3>

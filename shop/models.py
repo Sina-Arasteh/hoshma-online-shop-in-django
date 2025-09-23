@@ -23,7 +23,7 @@ class Category(models.Model):
     )
     parent = models.ForeignKey(
         'self',
-        on_delete=models.CASCADE,
+        on_delete=models.RESTRICT,
         null=True,
         blank=True,
         verbose_name=_("Parent"),
@@ -141,12 +141,11 @@ class Product(models.Model):
         max_length=250,
         unique=True
     )
-    category = models.ForeignKey(
+    categories = models.ManyToManyField(
         Category,
-        on_delete=models.SET_NULL,
-        null=True,
         related_name="products",
-        verbose_name=_("Category")
+        blank=True,
+        verbose_name=_("Categories")
     )
     price = models.PositiveIntegerField(_("Price"))
     discount = models.ForeignKey(
@@ -193,7 +192,7 @@ class Product(models.Model):
                 final_price = self.price - self.discount.amount
                 return final_price if final_price > 0 else 0
             else:
-                final_price = self.price - (self.price * self.amount / 100)
+                final_price = self.price - (self.price * self.discount.amount / 100)
                 return final_price
         return self.price
 

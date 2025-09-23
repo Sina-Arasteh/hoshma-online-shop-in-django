@@ -7,10 +7,10 @@
     {% if error %}
       <h5 class="bg-danger">{% translate 'Please, select an address in order to proceed to payment' %}</h5>
     {% endif %}
-    {% for orderitem in order.orderitems %}
+    {% for orderitem in order.orderitems.all() %}
       <div class="row">
         <div class="col-3">
-          <img src="{{ orderitem.product.main_images.url }}" alt="{{ orderitem.product.main_images.alt }}" width="72px" height="72px">
+          <img src="{{ orderitem.product.main_image.url }}" alt="{{ orderitem.product.main_image.alt }}" width="72px" height="72px">
         </div>
         <div class="col-6">
           <h3>{{ orderitem.product.title }}</h3>
@@ -41,7 +41,7 @@
               <option value="{{ address.pk }}">{{ address }}</option>
             {% endfor %}
           </select>
-          {% if len(addresses) < 5 %}
+          {% if addresses|length < 5 %}
             <div>
               <a href="{% url 'accounts:add-address' %}" class="btn btn-info" target="_blank">
                 {% translate 'Add Address' %}

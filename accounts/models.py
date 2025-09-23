@@ -152,9 +152,9 @@ class Order(models.Model):
         auto_now_add=True
     )
     status = models.CharField(
+        _("Status"),
         max_length=10,
         choices=ORDER_STATUS,
-        verbose_name=_("Status"),
         default='pending'
     )
     customer_note = models.TextField(
@@ -171,7 +171,7 @@ class Order(models.Model):
         verbose_name_plural = _("Orders")
 
     def total_price(self):
-        return sum(orderitem.item_total_price() for orderitem in self.orderitems)
+        return sum(orderitem.item_total_price() for orderitem in self.orderitems.all())
 
 class OrderItem(models.Model):
     order = models.ForeignKey(
@@ -197,7 +197,8 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(_("Quantity"))
 
     def save(self, *args, **kwargs):
-        self.price = self.product.get_final_price()
+        if not self.price:
+            self.price = self.product.get_final_price()
         self.discount = self.product.discount
         super().save(*args, **kwargs)
 

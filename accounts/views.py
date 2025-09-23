@@ -112,7 +112,7 @@ class SignUp(UserPassesTestMixin, View):
             del request.session['identifier_type']
             del request.session['identifier_value']
             next_url = request.session.pop('next', None)
-            return redirect(next_url or 'shop:home')
+            return redirect(next_url or 'shop:products')
         context = {
             'form': signup_form,
             'identifier_type': identifier_type,
@@ -150,7 +150,7 @@ class LogIn(UserPassesTestMixin, View):
                 del request.session['identifier_type']
                 del request.session['identifier_value']
                 next_url = request.session.pop('next', None)
-                return redirect(next_url or 'shop:home')
+                return redirect(next_url or 'shop:products')
         context = {'error': True}
         return render(request, 'accounts/login.html', context)
 
@@ -174,7 +174,7 @@ class Checkout(LoginRequiredMixin, View):
                 product=purchase[0],
                 quantity=purchase[1]
             )
-        order = Order.objects.get(pk=order.pk)
+        order = Order.objects.prefetch_related('orderitems__product__main_image').get(pk=order.pk)
         if hasattr(request.user, 'addresses'):
             addresses = request.user.addresses.all()
         else:
@@ -187,14 +187,17 @@ class Checkout(LoginRequiredMixin, View):
 
 class OrderCancellation(LoginRequiredMixin, View):
     def get(self, request, pk):
-        order = get_object_or_404(Order, pk=pk)
+        order = get_object_or_404(Order.objects.only('status'), pk=pk)
         order.status = ORDER_STATUS[4][0]
-        return redirect('shop:home')
+        order.save(update_fields=['status'])
+        return redirect('shop:products')
 
 class Payment(LoginRequiredMixin, View):
     def post(self, request, pk):
-        user_orders = Order.objects.filter(user=request.user)
-        order = get_object_or_404(user_orders, pk=pk)
+        order = get_object_or_404(
+            Order.objects.filter(user=request.user).prefetch_related('orderitems__product__main_image'),
+            pk=pk
+        )
         if not order.status == ORDER_STATUS[0][0]:
             raise Http404()
         form = CheckoutForm(request.POST, user=request.user)
@@ -225,7 +228,7 @@ class Account(LoginRequiredMixin, View):
             'phone': user.phone,
             'email': user.email,
             'addresses': user.addresses.all(),
-            'orders': user.orders,
+            'orders': user.orders.all().select_related('address').prefetch_related('orderitems__product'),
             'ORDER_STATUS_PENDING': ORDER_STATUS[0][0],
             'ORDER_STATUS_CANCELLED': ORDER_STATUS[4][0],
         }
@@ -265,8 +268,10 @@ class RemoveAddress(LoginRequiredMixin, UserPassesTestMixin, View):
             return True
 
     def post(self, request, pk):
-        user_addresses = Address.objects.filter(user=request.user)
-        address = get_object_or_404(user_addresses, pk=pk)
+        address = get_object_or_404(
+            Address.objects.filter(user=request.user),
+            pk=pk
+        )
         address.delete()
         return redirect('accounts:account')
 
@@ -275,8 +280,8 @@ class AccountDeletion(LoginRequiredMixin, View):
         user = request.user
         logout(request)
         user.is_active = False
-        user.save()
-        return redirect('shop:home')
+        user.save(update_fields=['is_active'])
+        return redirect('shproducts')
 
 class PasswordChange(LoginRequiredMixin, View):
     def get(self, request):
@@ -298,4 +303,4 @@ class PasswordChange(LoginRequiredMixin, View):
 class LogOut(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
-        return redirect('shop:home')
+        return redirect('shop:products')

@@ -1,6 +1,7 @@
 from django.shortcuts import (
     render,
-    redirect
+    redirect,
+    get_object_or_404
 )
 from django.views import View
 from django.urls import reverse
@@ -9,12 +10,8 @@ from shop.models import Product
 
 class Add(View):
     def post(self, request, pk):
-        try:
-            product = Product.objects.get(pk=pk)
-            in_stock = product.stock
-        except:
-            return redirect(reverse("product-detail", args=[pk]))
-        if in_stock:
+        product = get_object_or_404(Product, pk=pk)
+        if product.stock:
             cart = request.session.get('cart', {})
             try:
                 cart[pk] += 1

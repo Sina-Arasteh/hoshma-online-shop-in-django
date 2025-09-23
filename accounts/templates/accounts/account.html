@@ -61,7 +61,7 @@
             </p>
             <ol class="list-group">
               <li class="list-group-item text-center">{% translate 'Order Items' %}</li>
-              {% for orderitem in order.orderitems %}
+              {% for orderitem in order.orderitems.all() %}
                 <li class="list-group-item">{{ orderitem.product.title }} {% if orderitem.discount %}({% translate 'discount' %}){% endif %}: {{ orderitem.price }} {% translate "toman" %} &times; {{ orderitem.quantity }}</li>
               {% endfor %}
             </ol>

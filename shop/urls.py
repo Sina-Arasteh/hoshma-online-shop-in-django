@@ -6,8 +6,8 @@ from config import settings   # Remove me
 
 app_name = "shop"
 urlpatterns = [
-    path('', views.index, name="home"),
-    path('product/<int:pk>/', views.product_detail, name="product-detail"),
+    path('', views.ProductsPage.as_view(), name="products"),
+    path('product/<int:pk>/', views.ProductDetail.as_view(), name="product-detail"),
     path('category/<int:pk>/', views.CategoryProducts.as_view(), name="category-products"),
 ]
 
