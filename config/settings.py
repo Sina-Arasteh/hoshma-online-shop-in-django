@@ -184,3 +184,10 @@ CACHES = {
         }
     }
 }
+
+
+# Session
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+SESSION_COOKIE_AGE = 604800   # One week
