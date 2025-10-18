@@ -9,11 +9,15 @@ from django.shortcuts import (
 from django.views import View
 
 
-class ProductsPage(View):
+# class ProductsPage(View):
+#     def get(self, request):
+#         products = Product.objects.all().select_related('main_image', 'discount')
+#         context = {'products': products}
+#         return render(request, "shop/index.html", context)
+
+class Index(View):
     def get(self, request):
-        products = Product.objects.all().select_related('main_image', 'discount')
-        context = {'products': products}
-        return render(request, "shop/index.html", context)
+        return render(request, 'index.html')
 
 class ProductDetail(View):
     def get(self, request, pk):

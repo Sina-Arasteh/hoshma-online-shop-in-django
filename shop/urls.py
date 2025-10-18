@@ -9,7 +9,7 @@ app_name = "shop"
 urlpatterns = [
     path(
         '',
-        cache_page(60 * 5)(views.ProductsPage.as_view()),
+        cache_page(60 * 5)(views.Index.as_view()),
         name="products"
     ),
     path(
