@@ -9,23 +9,12 @@ services:
     ports:
       - "6379:6379"
 
-  db:
-    image: mysql
-    restart: always
-    container_name: hoshma-db
-    expose:
-      - 3306
-    volumes:
-      - hoshma_db_data:/var/lib/mysql
-    env_file: ".env"
-
   backend:
     build:
       context: .
       dockerfile: Dockerfile
     image: hoshma-shop-img
-    command: sh -c "./wait-for-it.sh db:3306 -- \
-                    python manage.py makemigrations && \
+    command: sh -c "python manage.py makemigrations && \
                     python manage.py migrate && \
                     python manage.py runserver 0.0.0.0:8000"
     container_name: hoshma-backend
@@ -35,8 +24,4 @@ services:
       - .:/usr/src/app
     env_file: ".env"
     depends_on:
-      - db
       - redis
-
-volumes:
-  hoshma_db_data:

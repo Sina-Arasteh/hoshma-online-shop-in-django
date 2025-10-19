@@ -1,3 +1,6 @@
+{% load i18n %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -6,17 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="application-name" content="Hoshma Online Shop">
 
-    <link rel="stylesheet" href="css/bootstrap.rtl.css">
-    <link rel="stylesheet" href="fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.rtl.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-    <script src="js/jquery.min.js" defer></script>
-    <script src="js/bootstrap.bundle.min.js" defer></script> 
-    <script src="js/owl.carousel.min.js" defer></script> 
-    <script src="js/jquery.simple.timer.js" defer></script>
-    <script src="js/script.js" defer></script>
+    <script src="{% static 'js/jquery.min.js' %}" defer></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}" defer></script> 
+    <script src="{% static 'js/owl.carousel.min.js' %}" defer></script> 
+    <script src="{% static 'js/jquery.simple.timer.js' %}" defer></script>
+    <script src="{% static 'js/script.js' %}" defer></script>
 
     <title>{% translate "Hoshma Online Shop | Home Page" %}</title>
     <link rel="shortcut icon" href="{% static 'favicon/favicon.png' %}" type="image/png">
@@ -29,25 +32,25 @@
     </div>
 
     <div class="d-none d-lg-block top-ads"><!-- start top ads -->
-        <a href="#" target="_blank"><img src="assets/images/top-ads.jpg"></a>
+        <a href="#" target="_blank"><img src="{% static 'images/top-ads.jpg' %}"></a>
     </div><!-- end top ads -->
 
     <header class="w-100 d-none d-lg-block bg-white"><!-- start header -->
         <div class="container">
             <div class="row py-2">
-                <div class="col-lg-2"><img src="assets/images/logo.png" alt="Nikkala"></div><!-- logo -->
+                <div class="col-lg-2"><img src="{% static 'images/logo.png' %}" alt="Nikkala"></div><!-- logo -->
                 <div class="col-lg-6 d-flex align-items-center justify-content-center"><!-- start search box -->
                     <div class="input-group search-box">
-                        <input type="search" class="form-control form-control-lg" placeholder="جستجو در نیک کالا">
-                        <button type="submit" class="btn btn-danger"><img src="assets/images/search.png"></button>
+                        <input type="search" class="form-control form-control-lg" placeholder="{% translate "Search in Hoshma" %}">
+                        <button type="submit" class="btn btn-danger"><img src="{% static 'images/search.png' %}"></button>
                     </div>
                 </div><!-- end search box -->
                 <div class="col-lg-3 d-flex align-items-center justify-content-end px-0"><!-- start signup & login -->
                     <div class="dropdown">
-                        <a href="#" class="header-login-btn me-4" data-bs-toggle="dropdown"><i class="fa fa-user-lock"></i>ورود / ثبت نام</a>
+                        <a href="#" class="header-login-btn me-4" data-bs-toggle="dropdown"><i class="fa fa-user-lock"></i>{% translate "Sign in \ Sign up" %}</a>
                         <ul class="dropdown-menu dropdown-menu-custom"><!-- start dropdown box -->
                             <li class="d-flex">
-                                <img src="assets/images/avatar.jpg" class="avatar">
+                                <img src="{% static 'images/avatar.jpg' %}" class="avatar">
                                 <div class="ms-2">                                   
                                     <a href="profile.html" class="font-14 text-dark">امیرحسین رضایی</a>                                   
                                     <a href="profile.html" class="font-12 d-block text-info mt-2">مشاهده حساب کاربری <i class="fa fa-chevron-left align-middle mt-1"></i></a>         
@@ -63,7 +66,7 @@
                 </div><!-- end signup & login -->
                 <div class="col-lg-1 d-flex align-items-center justify-content-center px-0"><!-- start shopping cart -->
                     <a href="#shopping-cart" class="position-relative" data-bs-toggle="offcanvas">
-                        <img src="assets/images/cart.png">
+                        <img src="{% static 'images/cart.png' %}">
                         <div class="count">2</div>
                     </a>
                     <div class="offcanvas offcanvas-end" tabindex="-1" data-bs-scroll="true" id="shopping-cart"><!-- start shopping cart offcanvas -->
@@ -76,7 +79,7 @@
                         <div class="offcanvas-body"><!-- start cart body -->
 
                             <div class="row"><!-- start cart item -->
-                                <div class="col-4"><img src="assets/images/mobile1.jpg" class="img-fluid img-thumbnail"></div>
+                                <div class="col-4"><img src="{% static 'images/mobile1.jpg' %}" class="img-fluid img-thumbnail"></div>
                                 <div class="col-8 d-flex align-items-center">
                                     <a href="product.html" class="cart-product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                 </div>
@@ -93,7 +96,7 @@
                             </div><!-- end cart item -->
 
                             <div class="row"><!-- start cart item -->
-                                <div class="col-4"><img src="assets/images/mobile2.jpg" class="img-fluid img-thumbnail"></div>
+                                <div class="col-4"><img src="{% static 'images/mobile2.jpg' %}" class="img-fluid img-thumbnail"></div>
                                 <div class="col-8 d-flex align-items-center">
                                     <a href="product.html" class="cart-product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                 </div>
@@ -110,7 +113,7 @@
                             </div><!-- end cart item -->
 
                             <div class="row"><!-- start cart item -->
-                                <div class="col-4"><img src="assets/images/mobile3.jpg" class="img-fluid img-thumbnail"></div>
+                                <div class="col-4"><img src="{% static 'images/mobile3.jpg' %}" class="img-fluid img-thumbnail"></div>
                                 <div class="col-8 d-flex align-items-center">
                                     <a href="product.html" class="cart-product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                 </div>
@@ -153,7 +156,7 @@
                     <div class="offcanvas offcanvas-start" tabindex="-1" data-bs-scroll="true" id="mobile-menu"><!-- start mobile menu-->
 
                         <div class="offcanvas-header"><!-- start menu header -->
-                            <img src="assets/images/logo.png">
+                            <img src="{% static 'images/logo.png' %}">
                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
                         </div><!-- end menu header -->
 
@@ -161,7 +164,7 @@
 
                             <div class="input-group search-box px-3"><!-- start search box -->
                                 <input type="search" class="form-control form-control-lg" placeholder="جستجو در نیک کالا">
-                                <button type="submit" class="btn btn-danger"><img src="assets/images/search.png"></button>
+                                <button type="submit" class="btn btn-danger"><img src="{% static 'images/search.png' %}"></button>
                             </div><!-- end search box -->
 
                             <ul class="mobile-menu-level-1"><!-- start mobile menu level 1 -->
@@ -209,7 +212,7 @@
 
                         </div>
                     </div><!-- end mobile menu-->
-                    <img src="assets/images/logo.png" class="img-fluid"><!-- logo -->
+                    <img src="{% static 'images/logo.png' %}" class="img-fluid"><!-- logo -->
                 </div>
 
                 <div class="col-4 d-flex align-items-center justify-content-end"><!-- start signup & login dropdown -->
@@ -217,7 +220,7 @@
                         <a href="#" data-bs-toggle="dropdown"><i class="fa fa-user-lock signup-login-icon"></i></a>
                         <ul class="dropdown-menu dropdown-menu-custom"><!-- start dropdown box -->
                             <li class="d-flex">
-                                <img src="assets/images/avatar.jpg" class="avatar">
+                                <img src="{% static 'images/avatar.jpg' %}" class="avatar">
                                 <div class="ms-2">                                   
                                     <a href="profile.html" class="font-14 text-dark">امیرحسین رضایی</a>                                   
                                     <a href="profile.html" class="font-12 d-block text-info mt-2">مشاهده حساب کاربری <i class="fa fa-chevron-left align-middle mt-1"></i></a>         
@@ -234,7 +237,7 @@
 
                 <div class="col-1 d-flex align-items-center justify-content-end"><!-- start shopping cart responsive-->
                     <a href="#shopping-cart-responsive" class="position-relative" data-bs-toggle="offcanvas">
-                        <img src="assets/images/cart.png">
+                        <img src="{% static 'images/cart.png' %}">
                         <div class="count">2</div>
                     </a>
                     <div class="offcanvas offcanvas-end" tabindex="-1" data-bs-scroll="true" id="shopping-cart-responsive"><!-- start shopping cart offcanvas -->
@@ -247,7 +250,7 @@
                         <div class="offcanvas-body"><!-- start cart body -->
 
                             <div class="row"><!-- start cart item -->
-                                <div class="col-4"><img src="assets/images/mobile1.jpg" class="img-fluid img-thumbnail"></div>
+                                <div class="col-4"><img src="{% static 'images/mobile1.jpg' %}" class="img-fluid img-thumbnail"></div>
                                 <div class="col-8 d-flex align-items-center">
                                     <a href="product.html" class="cart-product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                 </div>
@@ -264,7 +267,7 @@
                             </div><!-- end cart item -->
 
                             <div class="row"><!-- start cart item -->
-                                <div class="col-4"><img src="assets/images/mobile2.jpg" class="img-fluid img-thumbnail"></div>
+                                <div class="col-4"><img src="{% static 'images/mobile2.jpg' %}" class="img-fluid img-thumbnail"></div>
                                 <div class="col-8 d-flex align-items-center">
                                     <a href="product.html" class="cart-product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                 </div>
@@ -281,7 +284,7 @@
                             </div><!-- end cart item -->
 
                             <div class="row"><!-- start cart item -->
-                                <div class="col-4"><img src="assets/images/mobile3.jpg" class="img-fluid img-thumbnail"></div>
+                                <div class="col-4"><img src="{% static 'images/mobile3.jpg' %}" class="img-fluid img-thumbnail"></div>
                                 <div class="col-8 d-flex align-items-center">
                                     <a href="product.html" class="cart-product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                 </div>
@@ -369,7 +372,7 @@
                                 <li><a href="search.html">کتاب صوتی</a></li>
                                 <li><a href="search.html">لوازم تحریر</a></li>
                             </ul>
-                            <a href="#" class="d-block"><img src="assets/images/menu-pic.jpg" class="img-fluid rounded mt-3"></a>
+                            <a href="#" class="d-block"><img src="{% static 'images/menu-pic.jpg' %}" class="img-fluid rounded mt-3"></a>
                         </li>
                     </ul><!-- end mega menu-->
                 </li>
@@ -407,16 +410,16 @@
             <!-- The slideshow/carousel -->
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <a href="#" target="_blank" class="d-block w-100"><img src="assets/images/main-slider-1.png" class="d-block w-100"></a>
+                    <a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/main-slider-1.png' %}" class="d-block w-100"></a>
                 </div>
                 <div class="carousel-item">
-                    <a href="#" target="_blank" class="d-block w-100"><img src="assets/images/main-slider-2.png" class="d-block w-100"></a>
+                    <a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/main-slider-2.png' %}" class="d-block w-100"></a>
                 </div>
                 <div class="carousel-item">
-                    <a href="#" target="_blank" class="d-block w-100"><img src="assets/images/main-slider-1.png" class="d-block w-100"></a>
+                    <a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/main-slider-1.png' %}" class="d-block w-100"></a>
                 </div>
                 <div class="carousel-item">
-                    <a href="#" target="_blank" class="d-block w-100"><img src="assets/images/main-slider-2.png" class="d-block w-100"></a>
+                    <a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/main-slider-2.png' %}" class="d-block w-100"></a>
                 </div>
             </div>         
             <!-- Left and right controls/icons -->
@@ -435,8 +438,8 @@
             <div class="best-suggestion"><!-- start best suggestion slider -->
                 <div class="row">
                     <div class="col-4 col-lg-2 text-center">
-                        <img src="assets/images/best-suggest-1.png" class="best-suggest-pic">
-                        <a href="search.html" class="btn best-suggest-btn">مشاهده همه<i class="fa fa-angle-left ms-1 align-middle"></i></a>
+                        <img src="{% static 'images/best-suggest-1.png' %}" class="best-suggest-pic">
+                        <a href="search.html" class="btn best-suggest-btn">{% translate "Watch All" %}<i class="fa fa-angle-left ms-1 align-middle"></i></a>
                     </div>
                     <div class="col-8 col-lg-10">
                         <div class="owl-carousel owl-theme best-suggestion-slider">
@@ -444,7 +447,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="product.html" class="d-block">
                                     <div class="card border-0 custom-card">
-                                        <img src="assets/images/bs-1.jpg" class="slider-pic">
+                                        <img src="{% static 'images/bs-1.jpg' %}" class="slider-pic">
                                         <div class="card-body">
                                             <p class="font-14 text-dark text-center mt-2">هدفون بلوتوثی لیتو مدل L4</p>
                                             <div class="d-flex justify-content-between px-3">
@@ -464,7 +467,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="product.html" class="d-block">
                                     <div class="card border-0 custom-card">
-                                        <img src="assets/images/bs-2.jpg" class="slider-pic">
+                                        <img src="{% static 'images/bs-2.jpg' %}" class="slider-pic">
                                         <div class="card-body">
                                             <p class="font-14 text-dark text-center mt-2">هندزفری مدل PD-BT121</p>
                                             <div class="d-flex justify-content-between px-3">
@@ -484,7 +487,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="product.html" class="d-block">
                                     <div class="card border-0 custom-card">
-                                        <img src="assets/images/bs-3.jpg" class="slider-pic">
+                                        <img src="{% static 'images/bs-3.jpg' %}" class="slider-pic">
                                         <div class="card-body">
                                             <p class="font-14 text-dark text-center mt-2">کفش کوهنوردی کد AH21-X</p>
                                             <div class="d-flex justify-content-between px-3">
@@ -504,7 +507,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="product.html" class="d-block">
                                     <div class="card border-0 custom-card">
-                                        <img src="assets/images/bs-4.jpg" class="slider-pic">
+                                        <img src="{% static 'images/bs-4.jpg' %}" class="slider-pic">
                                         <div class="card-body">
                                             <p class="font-14 text-dark text-center mt-2">ساعت دیجیتال مدل 2023</p>
                                             <div class="d-flex justify-content-between px-3">
@@ -524,7 +527,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="product.html" class="d-block">
                                     <div class="card border-0 custom-card">
-                                        <img src="assets/images/bs-5.jpg" class="slider-pic">
+                                        <img src="{% static 'images/bs-5.jpg' %}" class="slider-pic">
                                         <div class="card-body">
                                             <p class="font-14 text-dark text-center mt-2">ساک ورزشی لکسین مدل LX014</p>
                                             <div class="d-flex justify-content-between px-3">
@@ -547,10 +550,10 @@
             </div><!-- end best suggestion slider -->
 
             <div class="row"><!-- start ads -->
-                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="assets/images/ads1.jpg" class="ads-img"></a></div>
-                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="assets/images/ads2.jpg" class="ads-img"></a></div>
-                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="assets/images/ads3.jpg" class="ads-img"></a></div>
-                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="assets/images/ads4.jpg" class="ads-img"></a></div>
+                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/ads1.jpg' %}" class="ads-img"></a></div>
+                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/ads2.jpg' %}" class="ads-img"></a></div>
+                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/ads3.jpg' %}" class="ads-img"></a></div>
+                <div class="col-xxl-3 col-xl-3 col-md-3 col-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/ads4.jpg' %}" class="ads-img"></a></div>
             </div><!-- end ads -->
 
 
@@ -558,13 +561,13 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="title">
-                            <h4>گوشی موبایل</h4>
+                            <h4>{% translate "Mobile Phone" %}</h4>
                         </div>
                         <div class="owl-carousel owl-theme custom-product-slider">
 
                             <div class="item"><!-- start item -->
                                 <div class="card border-0 custom-card mt-3">
-                                    <a href="product.html" class="d-block w-100"><img src="assets/images/mobile1.jpg" class="slider-pic"></a>
+                                    <a href="product.html" class="d-block w-100"><img src="{% static 'images/mobile1.jpg' %}" class="slider-pic"></a>
                                     <div class="card-body">
                                         <a href="product.html" class="product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                         <div class="d-flex justify-content-between">
@@ -581,7 +584,7 @@
 
                                 <div class="item"><!-- start item -->
                                     <div class="card border-0 custom-card mt-3">
-                                        <a href="product.html" class="d-block w-100"><img src="assets/images/mobile2.jpg" class="slider-pic"></a>
+                                        <a href="product.html" class="d-block w-100"><img src="{% static 'images/mobile2.jpg' %}" class="slider-pic"></a>
                                         <div class="card-body">
                                             <a href="product.html" class="product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                             <div class="d-flex justify-content-between">
@@ -598,7 +601,7 @@
 
                             <div class="item"><!-- start item -->
                                 <div class="card border-0 custom-card mt-3">
-                                    <a href="product.html" class="d-block w-100"><img src="assets/images/mobile3.jpg" class="slider-pic"></a>
+                                    <a href="product.html" class="d-block w-100"><img src="{% static 'images/mobile3.jpg' %}" class="slider-pic"></a>
                                     <div class="card-body">
                                         <a href="product.html" class="product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                         <div class="d-flex justify-content-between">
@@ -615,7 +618,7 @@
 
                             <div class="item"><!-- start item -->
                                 <div class="card border-0 custom-card mt-3">
-                                    <a href="product.html" class="d-block w-100"><img src="assets/images/mobile4.jpg" class="slider-pic"></a>
+                                    <a href="product.html" class="d-block w-100"><img src="{% static 'images/mobile4.jpg' %}" class="slider-pic"></a>
                                     <div class="card-body">
                                         <a href="product.html" class="product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                         <div class="d-flex justify-content-between">
@@ -632,7 +635,7 @@
 
                             <div class="item"><!-- start item -->
                                 <div class="card border-0 custom-card mt-3">
-                                    <a href="product.html" class="d-block w-100"><img src="assets/images/mobile2.jpg" class="slider-pic"></a>
+                                    <a href="product.html" class="d-block w-100"><img src="{% static 'images/mobile2.jpg' %}" class="slider-pic"></a>
                                     <div class="card-body">
                                         <a href="product.html" class="product-title">گوشی موبایل سامسونگ مدل Galaxy A21S SM-A217F/DS</a>
                                         <div class="d-flex justify-content-between">
@@ -653,8 +656,8 @@
             </div><!-- end product slider -->
 
             <div class="row"><!-- start ads -->
-                <div class="col-xxl-6 col-xl-6 col-md-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="assets/images/ads5.gif" class="ads-img"></a></div>
-                <div class="col-xxl-6 col-xl-6 col-md-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="assets/images/ads5.jpg" class="ads-img"></a></div>
+                <div class="col-xxl-6 col-xl-6 col-md-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/ads5.gif' %}" class="ads-img"></a></div>
+                <div class="col-xxl-6 col-xl-6 col-md-6 mb-3"><a href="#" target="_blank" class="d-block w-100"><img src="{% static 'images/ads5.jpg' %}" class="ads-img"></a></div>
             </div><!-- end ads -->
 
             <div class="category-box"><!-- start category box -->
@@ -676,13 +679,13 @@
                 <div class="row pb-4">
                     <div class="col-12">
                         <div class="title">
-                            <h4>پیشنهاد ما</h4>
+                            <h4>{% translate "Our Suggestion" %}</h4>
                         </div>
                         <div class="row">
 
                             <div class="col-lg-4 col-md-6"><!-- start item -->
                                 <div class="d-flex py-3 mx-3 border-bottom">
-                                    <img src="assets/images/our-suggest-1.webp" class="our-suggest-pic">
+                                    <img src="{% static 'images/our-suggest-1.webp' %}" class="our-suggest-pic">
                                     <div class="our-suggest-detail flex-grow-1 pt-3">
                                         <a href="product.html" class="our-suggest-title">هندزفری بلوتوثی مدل inpods-12</a>
                                         <div class="d-flex my-3 ps-3">
@@ -700,7 +703,7 @@
 
                             <div class="col-lg-4 col-md-6"><!-- start item -->
                                 <div class="d-flex py-3 mx-3 border-bottom">
-                                    <img src="assets/images/our-suggest-2.webp" class="our-suggest-pic">
+                                    <img src="{% static 'images/our-suggest-2.webp' %}" class="our-suggest-pic">
                                     <div class="our-suggest-detail flex-grow-1 pt-3">
                                         <a href="product.html" class="our-suggest-title">ادو پرفیوم مردانه مدل ساواج دیور</a>
                                         <div class="d-flex my-3 ps-3">
@@ -718,7 +721,7 @@
 
                             <div class="col-lg-4 col-md-6"><!-- start item -->
                                 <div class="d-flex py-3 mx-3 border-bottom">
-                                    <img src="assets/images/our-suggest-3.webp" class="our-suggest-pic">
+                                    <img src="{% static 'images/our-suggest-3.webp' %}" class="our-suggest-pic">
                                     <div class="our-suggest-detail flex-grow-1 pt-3">
                                         <a href="product.html" class="our-suggest-title">هدفون بلوتوثی کیو سی وای مدل T13</a>
                                         <div class="d-flex my-3 ps-3">
@@ -736,7 +739,7 @@
 
                             <div class="col-lg-4 col-md-6"><!-- start item -->
                                 <div class="d-flex py-3 mx-3 border-bottom">
-                                    <img src="assets/images/our-suggest-4.webp" class="our-suggest-pic">
+                                    <img src="{% static 'images/our-suggest-4.webp' %}" class="our-suggest-pic">
                                     <div class="our-suggest-detail flex-grow-1 pt-3">
                                         <a href="product.html" class="our-suggest-title">کفش پیاده روی مردانه مدل Sk005</a>
                                         <div class="d-flex my-3 ps-3">
@@ -754,7 +757,7 @@
 
                             <div class="col-lg-4 col-md-6"><!-- start item -->
                                 <div class="d-flex py-3 mx-3 border-bottom">
-                                    <img src="assets/images/our-suggest-6.jpg" class="our-suggest-pic">
+                                    <img src="{% static 'images/our-suggest-6.jpg' %}" class="our-suggest-pic">
                                     <div class="our-suggest-detail flex-grow-1 pt-3">
                                         <a href="product.html" class="our-suggest-title">ساعت هوشمند مدل DT70 Premium </a>
                                         <div class="d-flex my-3 ps-3">
@@ -772,7 +775,7 @@
 
                             <div class="col-lg-4 col-md-6"><!-- start item -->
                                 <div class="d-flex py-3 mx-3 border-bottom">
-                                    <img src="assets/images/our-suggest-5.webp" class="our-suggest-pic">
+                                    <img src="{% static 'images/our-suggest-5.webp' %}" class="our-suggest-pic">
                                     <div class="our-suggest-detail flex-grow-1 pt-3">
                                         <a href="product.html" class="our-suggest-title">کنسول بازی سونی مدل Playstation</a>
                                         <div class="d-flex my-3 ps-3">
@@ -797,14 +800,14 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="title">
-                            <h4>برندهای ویژه</h4>
+                            <h4>{% translate "Brands" %}</h4>
                         </div>
                         <div class="owl-carousel owl-theme custom-product-slider">
 
                             <div class="item"><!-- start item -->
                                 <a href="search.html" class="d-block">
                                     <div class="card border-0 custom-card mt-3">
-                                        <img src="assets/images/brands1.jpg" class="brands-pic">
+                                        <img src="{% static 'images/brands1.jpg' %}" class="brands-pic">
                                     </div>
                                 </a>
                             </div><!-- end item -->
@@ -812,7 +815,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="search.html" class="d-block">
                                     <div class="card border-0 custom-card mt-3">
-                                        <img src="assets/images/brands2.jpg" class="brands-pic">
+                                        <img src="{% static 'images/brands2.jpg' %}" class="brands-pic">
                                     </div>
                                 </a>
                             </div><!-- end item -->
@@ -820,7 +823,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="search.html" class="d-block">
                                     <div class="card border-0 custom-card mt-3">
-                                        <img src="assets/images/brands3.jpg" class="brands-pic">
+                                        <img src="{% static 'images/brands3.jpg' %}" class="brands-pic">
                                     </div>
                                 </a>
                             </div><!-- end item -->
@@ -828,7 +831,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="search.html" class="d-block">
                                     <div class="card border-0 custom-card mt-3">
-                                        <img src="assets/images/brands4.jpg" class="brands-pic">
+                                        <img src="{% static 'images/brands4.jpg' %}" class="brands-pic">
                                     </div>
                                 </a>
                             </div><!-- end item -->
@@ -836,7 +839,7 @@
                             <div class="item"><!-- start item -->
                                 <a href="search.html" class="d-block">
                                     <div class="card border-0 custom-card mt-3">
-                                        <img src="assets/images/brands5.jpg" class="brands-pic">
+                                        <img src="{% static 'images/brands5.jpg' %}" class="brands-pic">
                                     </div>
                                 </a>
                             </div><!-- end item -->
@@ -850,14 +853,14 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="title">
-                            <h4>خواندنی ها </h4>
+                            <h4>{% translate "Articles" %}</h4>
                         </div>
                         <div class="row mt-4 px-2">
 
                             <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 mb-3"><!-- start item -->
                                 <a href="blog-detail.html" class="d-block">
                                     <div class="card blog-card">
-                                        <img src="assets/images/mag-1.jpg" class="blog-img">
+                                        <img src="{% static 'images/mag-1.jpg' %}" class="blog-img">
                                         <div class="card-body">
                                             <a href="blog-detail.html">طرز تهیه رولت کرپ با کرم فندق؛ آسان و بدون نیاز به فر</a>
                                         </div>
@@ -868,7 +871,7 @@
                             <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 mb-3"><!-- start item -->
                                 <a href="blog-detail.html" class="d-block">
                                     <div class="card blog-card">
-                                        <img src="assets/images/mag-2.jpg" class="blog-img">
+                                        <img src="{% static 'images/mag-2.jpg' %}" class="blog-img">
                                         <div class="card-body">
                                             <a href="blog-detail.html">بررسی خردکن سیلور کرست مدل SLMA مناسب کارهای دم‌دستی</a>
                                         </div>
@@ -879,7 +882,7 @@
                             <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 mb-3"><!-- start item -->
                                 <a href="blog-detail.html" class="d-block">
                                     <div class="card blog-card">
-                                        <img src="assets/images/mag-3.jpg" class="blog-img">
+                                        <img src="{% static 'images/mag-3.jpg' %}" class="blog-img">
                                         <div class="card-body">
                                             <a href="blog-detail.html">۱۰ اشتباه که کاربران تازه‌ وارد گوشی‌های اندرویدی مرتکب می‌شوند</a>
                                         </div>
@@ -890,7 +893,7 @@
                             <div class="col-xxl-3 col-xl-3 col-lg-3 col-sm-6 mb-3"><!-- start item -->
                                 <a href="blog-detail.html" class="d-block">
                                     <div class="card blog-card">
-                                        <img src="assets/images/mag-4.jpg" class="blog-img">
+                                        <img src="{% static 'images/mag-4.jpg' %}" class="blog-img">
                                         <div class="card-body">
                                             <a href="blog-detail.html">راهنمای خرید بهترین گوشی سامسونگ سری A؛ گزینه‌های ایده‌آل خرید</a>
                                         </div>
@@ -909,11 +912,11 @@
     <footer><!-- start footer -->
         <div class="container">
             <div class="row footer-svg-icons border-bottom mx-2 py-2">
-                <div class="col-6 col-md text-center"><img src="assets/images/1.svg"><p>تحویل اکسپرس</p></div>
-                <div class="col-6 col-md text-center"><img src="assets/images/2.svg"><p >پشتیبانی 24 ساعته </p></div>
-                <div class="col-6 col-md text-center"><img src="assets/images/3.svg"><p>پرداخت در محل </p></div>
-                <div class="col-6 col-md text-center"><img src="assets/images/4.svg"><p>7 روز ضمانت بازگشت کالا</p></div>
-                <div class="col-12 col-md text-center"><img src="assets/images/5.svg"><p>ضمانت اصل بودن کالا</p></div>
+                <div class="col-6 col-md text-center"><img src="{% static 'images/1.svg' %}"><p>{% translate "Express Delivery" %}</p></div>
+                <div class="col-6 col-md text-center"><img src="{% static 'images/2.svg' %}"><p >{% translate "24/7 Customer Support" %}</p></div>
+                <div class="col-6 col-md text-center"><img src="{% static 'images/3.svg' %}"><p>{% translate "Cash on Delivery" %}</p></div>
+                <div class="col-6 col-md text-center"><img src="{% static 'images/4.svg' %}"><p>{% translate "7-Day Return Guarantee" %}</p></div>
+                <div class="col-12 col-md text-center"><img src="{% static 'images/5.svg' %}"><p>{% translate "Authenticity Guarantee" %}</p></div>
             </div>
             <div class="row"><!-- start footer box -->
                 <div class="col-lg-2 col-sm-6 footer-box">
@@ -962,12 +965,12 @@
                 <div class="col-12 app-download">
                     <div class="row">
                         <div class="col-5 d-flex align-items-center">
-                            <img src="assets/images/footerLogo.png" class="p-2">
+                            <img src="{% static 'images/footerLogo.png' %}" class="p-2">
                             <span class="text-white ms-2"> دانلود اپلیکیشن</span>
                         </div>   
                         <div class="col-7 d-flex align-items-center justify-content-end">
-                            <a href="#"><img src="assets/images/bazzar.svg" class="img-fluid me-2 rounded"></a>
-                            <a href="#"><img src="assets/images/sib-app.svg" class="img-fluid rounded"></a>
+                            <a href="#"><img src="{% static 'images/bazzar.svg' %}" class="img-fluid me-2 rounded"></a>
+                            <a href="#"><img src="{% static 'images/sib-app.svg' %}" class="img-fluid rounded"></a>
                         </div>  
                     </div>
                 </div>
@@ -984,8 +987,8 @@
                     </span>
                 </div>
                 <div class="col-md-4 col-12 d-flex align-items-center justify-content-end footer-pic pe-0">
-                    <img src="assets/images/f-1.png" class="footer-detail-pic">
-                    <img src="assets/images/f-2.png" class="footer-detail-pic">
+                    <img src="{% static 'images/f-1.png' %}" class="footer-detail-pic">
+                    <img src="{% static 'images/f-2.png' %}" class="footer-detail-pic">
                 </div>
             </div><!-- end footer details -->
             <div class="row"><!-- start copy right -->

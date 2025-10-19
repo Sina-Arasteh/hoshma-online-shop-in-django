@@ -4,7 +4,6 @@ WORKDIR /usr/src/app
 
 RUN apt-get update && apt-get install -y \
     gettext \
-    default-libmysqlclient-dev \
     build-essential
 
 RUN pip install --upgrade pip
@@ -13,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN chmod +x wait-for-it.sh
+# RUN chmod +x wait-for-it.sh
