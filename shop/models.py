@@ -1,8 +1,11 @@
 from django.db import models
 from . import validators
-from .constants import DISCOUNT_CHOICES
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator
+)
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.utils import timezone
@@ -34,9 +37,9 @@ class Category(models.Model):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.full_clean()
+    #     super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()
@@ -79,44 +82,46 @@ class Category(models.Model):
         parents = "/".join([p.name for p in self.get_parents_hierarchy()])
         return f"{parents} / {self.name}" if parents else self.name
 
-class Discount(models.Model):
-    type = models.CharField(
-        _('Type'),
-        max_length=10,
-        choices=DISCOUNT_CHOICES
+class GlobalDiscount(models.Model):
+    name = models.CharField(
+        _("Name"),
+        max_length=150,
+        unique=True
     )
     amount = models.PositiveIntegerField(
         _("Amount"),
-        validators=[validators.validate_positive_value,]
+        validators=[
+            MaxValueValidator(
+                100,
+                message=_("The amount of Global Discount cannot be more than 100%")
+            ),
+            MinValueValidator(
+                1,
+                message=_("The amount should start from 1%.")
+            )
+        ]
     )
-    start = models.DateTimeField(
-        _("Start"),
+    start_date = models.DateField(
+        _("Start Date"),
         validators=[validators.validate_not_in_past,]
     )
-    end = models.DateTimeField(
-        _("End"),
+    end_date = models.DateField(
+        _("End Date"),
         validators=[validators.validate_not_in_past,]
     )
 
     class Meta:
-        verbose_name = _("Discount")
-        verbose_name_plural = _("Discounts")
+        verbose_name = _("Global Discount")
+        verbose_name_plural = _("Global Discounts")
 
     def clean(self):
         super().clean()
 
-        if self.type == "percentage" and self.amount > 100:
-            raise ValidationError({'amount': _("Amount cannot be more than 100 while the discount type is percentage.")})
-
-        if self.start >= self.end:
-            raise ValidationError({'end': _("Please set a date and time after the date and time of the start.")})
-    
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
+        if self.start_date >= self.end_date:
+            raise ValidationError({'end_date': _("End date cannot be sooner than the start date.")})
 
     def __str__(self):
-        return f"{self.type}: {self.amount}"
+        return self.name
 
 # class Coupon(models.Model):
 #     pass
@@ -138,18 +143,18 @@ class Tag(models.Model):
 class Product(models.Model):
     title = models.CharField(
         _("Title"),
-        max_length=250,
+        max_length=150,
         unique=True
     )
-    categories = models.ManyToManyField(
+    category = models.ForeignKey(
         Category,
+        on_delete=models.,
         related_name="products",
-        blank=True,
-        verbose_name=_("Categories")
+        verbose_name=_("Category")
     )
     price = models.PositiveIntegerField(_("Price"))
     discount = models.ForeignKey(
-        Discount,
+        GlobalDiscount,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -184,7 +189,7 @@ class Product(models.Model):
 
     def get_final_price(self):
         if self.discount:
-            if self.discount.end < timezone.now():
+            if self.discount.end_date < timezone.now():
                 self.discount = None
                 self.save(update_fields=['discount'])
                 return self.price

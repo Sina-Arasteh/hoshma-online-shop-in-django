@@ -9,8 +9,16 @@ app_name = "shop"
 urlpatterns = [
     path(
         '',
-        cache_page(0)(views.Index.as_view()),
+        cache_page(0)(views.IndexPage.as_view()),
         name="products"
+    ),
+    path(
+        'remove-me/',
+        views.RemoveMe.as_view()
+    ),
+    path(
+        'remove-me-2/',
+        views.RemoveMe2.as_view()
     ),
     path(
         'product/<int:pk>/',

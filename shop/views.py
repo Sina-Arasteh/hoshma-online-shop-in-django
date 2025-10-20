@@ -15,9 +15,17 @@ from django.views import View
 #         context = {'products': products}
 #         return render(request, "shop/index.html", context)
 
-class Index(View):
+class IndexPage(View):
     def get(self, request):
         return render(request, 'index.html')
+
+class RemoveMe(View):
+    def get(self, request):
+        return render(request, 'search.html')
+
+class RemoveMe2(View):
+    def get(self, request):
+        return render(request, 'product.html')
 
 class ProductDetail(View):
     def get(self, request, pk):
