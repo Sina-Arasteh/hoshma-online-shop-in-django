@@ -1,14 +1,15 @@
 from django.db import models
 from . import validators
-from django.utils.text import slugify
+from .constants import PHONE_BRANDS
 from django.core.exceptions import ValidationError
 from django.core.validators import (
     MaxValueValidator,
     MinValueValidator
 )
+from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
-from django.utils import timezone
 
 
 def product_main_image_upload_to(instance, filename):
@@ -37,12 +38,9 @@ class Category(models.Model):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
-    # def save(self, *args, **kwargs):
-    #     self.full_clean()
-    #     super().save(*args, **kwargs)
-
     def clean(self):
         super().clean()
+
         if self.parent == self:
             raise ValidationError({'parent': _("A category cannot be set as a parent for itself.")})
         
@@ -52,7 +50,7 @@ class Category(models.Model):
                 raise ValidationError({'parent': _("Circular parent relationship detected.")})
             ancestor = ancestor.parent
 
-    def get_parents_hierarchy(self):
+    def get_parents(self):
         parent = self.parent
         parents = list()
         while parent:
@@ -60,26 +58,12 @@ class Category(models.Model):
             parent = parent.parent
         parents.reverse()
         return parents
-
-    def get_children(self):
-        """This method retrieves all the direct and grand children."""
-        children = list()
-        def collect_children(category):
-            for child in category.children.all():
-                children.append(child)
-                collect_children(child)
-        collect_children(self)
-        return children
-
-    def get_all_children_products(self):
-        children = Category.objects.filter(id__in=[c.id for c in self.get_children()]).prefetch_related('products')
-        products = set()
-        for child in children:
-            products.update(product for product in child.products.all())
-        return sorted(list(products))
+    
+    def has_children(self):
+        return bool(self.children)
 
     def __str__(self):
-        parents = "/".join([p.name for p in self.get_parents_hierarchy()])
+        parents = "/".join([p.name for p in self.get_parents()])
         return f"{parents} / {self.name}" if parents else self.name
 
 class GlobalDiscount(models.Model):
@@ -88,17 +72,17 @@ class GlobalDiscount(models.Model):
         max_length=150,
         unique=True
     )
-    amount = models.PositiveIntegerField(
-        _("Amount"),
+    percentage = models.PositiveIntegerField(
+        _("Percentage"),
         validators=[
-            MaxValueValidator(
-                100,
-                message=_("The amount of Global Discount cannot be more than 100%")
-            ),
             MinValueValidator(
                 1,
-                message=_("The amount should start from 1%.")
-            )
+                message=_("The percentage of the global discount should start from 1%.")
+            ),
+            MaxValueValidator(
+                100,
+                message=_("The percentage of the global discount cannot be greater than 100%")
+            ),
         ]
     )
     start_date = models.DateField(
@@ -126,20 +110,6 @@ class GlobalDiscount(models.Model):
 # class Coupon(models.Model):
 #     pass
 
-class Tag(models.Model):
-    name = models.CharField(
-        _("Name"),
-        max_length=30,
-        unique=True
-    )
-
-    class Meta:
-        verbose_name = _("Tag")
-        verbose_name_plural = _("Tags")
-
-    def __str__(self):
-        return self.name
-
 class Product(models.Model):
     title = models.CharField(
         _("Title"),
@@ -148,64 +118,117 @@ class Product(models.Model):
     )
     category = models.ForeignKey(
         Category,
-        on_delete=models.,
-        related_name="products",
-        verbose_name=_("Category")
+        on_delete=models.SET_NULL,
+        related_name="%(class)ss",
+        verbose_name=_("Category"),
+        null=True
     )
     price = models.PositiveIntegerField(_("Price"))
-    discount = models.ForeignKey(
+    discount = models.PositiveIntegerField(
+        _("Discount"),
+        null=True,
+        blank=True,
+        validators=[
+            MinValueValidator(
+                1,
+                message=_("The percentage of the discount should start from 1%.")
+            ),
+            MaxValueValidator(
+                100,
+                message=_("The percentage of the discount cannot be greater than 100%")
+            ),
+        ]
+    )
+    global_discount = models.ForeignKey(      # Set this field to null automatically when the global_discount.end_date has been expired.
         GlobalDiscount,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name=_("Discount"),
-        related_name='products'
+        verbose_name=_("Global Discount"),
+        related_name="%(class)ss"
     )
-    tags = models.ManyToManyField(
-        Tag,
-        related_name="products",
-        verbose_name=_("Tags")
+    product_description = models.TextField(
+        _("Product Description"),
+        max_length=2000
     )
-    description_brief = models.TextField(_("Brief Description"))
-    description = models.TextField(_("Description"))
-    stock = models.PositiveIntegerField(
-        _("Stock"),
-        default=0
+    created_at = models.DateTimeField(
+        _("Created At"),
+        auto_now_add=True
     )
-    creation = models.DateTimeField(
-        _("Creation"),
-        auto_now_add=True,
-        editable=False
-    )
-    last_modification = models.DateTimeField(
-        _("Last Modification"),
-        auto_now=True,
-        editable=False
+    updated_at = models.DateTimeField(
+        _("Updated At"),
+        auto_now=True
     )
 
     class Meta:
-        verbose_name = _("Product")
-        verbose_name_plural = _("Products")
+        abstract = True
+    
+    def clean(self):
+        super().clean()
+
+        if self.category.has_children():
+            raise ValidationError({'category': _("Categories with child (or children) are not permissible.")})
 
     def get_final_price(self):
+        final_price = self.price
         if self.discount:
-            if self.discount.end_date < timezone.now():
-                self.discount = None
-                self.save(update_fields=['discount'])
-                return self.price
-            elif self.discount.type == "fixed":
-                final_price = self.price - self.discount.amount
-                return final_price if final_price > 0 else 0
-            else:
-                final_price = self.price - (self.price * self.discount.amount / 100)
-                return final_price
-        return self.price
+            final_price -= final_price * self.discount / 100
+        if self.global_discount and self.global_discount.start_date <= timezone.now().date() <= self.global_discount.end_date:
+            final_price -= final_price * self.global_discount.percentage / 100
+        return final_price
 
     def __str__(self):
         return self.title
     
-    def get_absolute_url(self):
-        return reverse("shop:product-detail", kwargs={"pk": self.pk})
+    # def get_absolute_url(self):
+    #     return reverse("shop:product-detail", kwargs={"pk": self.pk})
+
+class Phone(Product):
+    brand = models.CharField(
+        _("Brand"),
+        max_length=50,
+        choices=PHONE_BRANDS
+    )
+    os = models.CharField(
+        _("Operating System"),
+        max_length=20
+    )
+    internal_storage = models.CharField(
+        _("Internal Storage"),
+        max_length=20
+    )
+    connectivity_networks = models.CharField(
+        _("Connectivity Networks"),
+        max_length=20
+    )
+    rear_cameras_number = models.CharField(_("Rear Cameras Number"))
+    guarantee = models.CharField(
+        _("Guarantee"),
+        max_length=100
+    )
+    # specifications = models.
+    class Meta:
+        verbose_name = _("Phone")
+        verbose_name_plural = _("Phones")
+
+class PhoneColorVariant(models.Model):
+    phone = models.ForeignKey(
+        Phone,
+        on_delete=models.CASCADE,
+        related_name="colors",
+        verbose_name=_("Phone")
+    )
+    color = models.CharField(
+        _("Color"),
+        max_length=6
+    )   # Hexadecimal Colors
+    stock = models.PositiveIntegerField(
+        _("Stock"),
+        default=0
+    )
+
+    # def __str__(self):
+    #     pass
 
 class MainImage(models.Model):
     product = models.OneToOneField(

@@ -1,0 +1,30 @@
+from django.utils.translation import gettext_lazy as _
+
+
+PHONE_BRANDS = {
+    "Apple": _("Apple"),
+    "Samsung": _("Samsung"),
+    "Xiaomi": _("Xiaomi"),
+    "Huawei": _("Huawei"),
+    "Oppo": _("Oppo"),
+    "Vivo": _("Vivo"),
+    "Realme": _("Realme"),
+    "OnePlus": _("OnePlus"),
+    "Motorola": _("Motorola"),
+    "Nokia": _("Nokia"),
+    "Sony": _("Sony"),
+    "Google": _("Google"),
+    "Asus": _("Asus"),
+    "Lenovo": _("Lenovo"),
+    "Honor": _("Honor"),
+    "Infinix": _("Infinix"),
+    "Tecno": _("Tecno"),
+    "ZTE": _("ZTE"),
+    "TCL": _("TCL"),
+    "Meizu": _("Meizu"),
+    "Micromax": _("Micromax"),
+    "Lava": _("Lava"),
+    "Fairphone": _("Fairphone"),
+    "BLU": _("BLU"),
+    "CAT": _("CAT"),
+}
