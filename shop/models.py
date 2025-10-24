@@ -3,20 +3,14 @@ from . import validators
 from .constants import PHONE_BRANDS
 from django.core.exceptions import ValidationError
 from django.core.validators import (
+    MinValueValidator,
     MaxValueValidator,
-    MinValueValidator
+    MinLengthValidator,
 )
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
-
-
-def product_main_image_upload_to(instance, filename):
-    return f"products/{slugify(instance.title)}/main_image/{filename}"
-
-def product_images_upload_to(instance, filename):
-    return f"products/{slugify(instance.product.title)}/{filename}"
 
 
 class Category(models.Model):
@@ -66,10 +60,10 @@ class Category(models.Model):
         parents = "/".join([p.name for p in self.get_parents()])
         return f"{parents} / {self.name}" if parents else self.name
 
-class GlobalDiscount(models.Model):
-    name = models.CharField(
-        _("Name"),
-        max_length=150,
+class GlobalDiscount(models.Model):   # It's a good practice to have an "is_active" field in order to show if the
+    name = models.CharField(          # global discount instance is active. We need to implement this feature in a
+        _("Name"),                    # way that the "is_active" automatically (e.g., using Celery) changes to True
+        max_length=150,               # when the condition (start_date & end_date) is approved.
         unique=True
     )
     percentage = models.PositiveIntegerField(
@@ -139,7 +133,7 @@ class Product(models.Model):
             ),
         ]
     )
-    global_discount = models.ForeignKey(      # Set this field to null automatically when the global_discount.end_date has been expired.
+    global_discount = models.ForeignKey(   # Set this field to null automatically when the global_discount.end_date has been expired.
         GlobalDiscount,
         on_delete=models.SET_NULL,
         null=True,
@@ -220,60 +214,54 @@ class PhoneColorVariant(models.Model):
     )
     color = models.CharField(
         _("Color"),
-        max_length=6
+        max_length=6,
+        validators=[MinLengthValidator(
+            6,
+            message=_("Hexadecimal color codes consist of six characters.")
+        )]
     )   # Hexadecimal Colors
     stock = models.PositiveIntegerField(
         _("Stock"),
         default=0
     )
 
-    # def __str__(self):
-    #     pass
+    def __str__(self):
+        return f"{self.phone.title}: {self.color}"
 
-class MainImage(models.Model):
-    product = models.OneToOneField(
+def phone_image_upload_to(instance, filename):
+    slug = slugify(instance.phone.title) or "undefined"
+    return f"phones/{slug}/{filename}"
+
+class PhoneImage(models.Model):
+    phone = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
-        related_name='main_image',
-        primary_key=True,
-        verbose_name=_("Product")
+        related_name='images',
+        verbose_name=_("Phone")
     )
-    image = models.ImageField(
-        _("Main Image"),
-        upload_to=product_main_image_upload_to
+    image = models.ImageField(   # Validate size and extension
+        _("Image"),
+        upload_to=phone_image_upload_to
     )
-    alt = models.CharField(
-        _("Alt"),
+    is_main = models.BooleanField(
+        _("Is Main"),
+        default=False
+    )
+    alt_text = models.CharField(
+        _("Alt Text"),
         max_length=100
     )
 
     class Meta:
-        verbose_name = _("Main Image")
-        verbose_name_plural = _("Main Images")
+        verbose_name = _("Phone Image")
+        verbose_name_plural = _("Phone Images")
+        ordering = ['-is_main', 'id']   # Main image first, then by upload order
+    
+    def clean(self):
+        super().clean()
+
+        if self.is_main and PhoneImage.objects.filter(phone=self.phone, is_main=True).exclude(pk=self.pk).exists():
+            raise ValidationError({'is_main': _("Only one main image is allowed per phone.")})
 
     def __str__(self):
-        return f"Main image for {self.product.id}"
-
-class Image(models.Model):
-    image = models.ImageField(
-        _("Image"),
-        upload_to=product_images_upload_to
-    )
-    alt = models.CharField(
-        _("Alt"),
-        max_length=100,
-        blank=True
-    )
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.CASCADE,
-        related_name='images',
-        verbose_name=_("Product")
-    )
-
-    class Meta:
-        verbose_name = _("Image")
-        verbose_name_plural = _("Images")
-
-    def __str__(self):
-        return f"Image for {self.product.id}"
+        return f"Image for {self.phone}"
